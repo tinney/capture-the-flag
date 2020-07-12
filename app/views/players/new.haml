@@ -1,0 +1,20 @@
+.row
+  .col
+    %h3
+      Create Player for Team
+      = @team.name
+  .col
+    .float-right= link_to 'Back to Team', team_path(@team), class: 'btn btn-primary btn-sm'
+.row
+  .col
+    %br
+- if @player.errors.any?
+  - @player.errors.full_messages.each do |error_message|
+    .row
+      .col
+        .form-errors.alert.alert-danger= error_message
+.row
+  .col
+    = form_for [@team, @player] do |form|
+      = render 'form', f: form 
+      = form.submit "Create", class: 'btn btn-primary'

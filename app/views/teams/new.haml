@@ -1,0 +1,10 @@
+%h3 Create Team
+- if @team.errors.any?
+  .form-errors
+    - @team.errors.full_messages.each do |error_message|
+      %h4= error_message
+
+= form_for @team do |form|
+  = render 'form', f: form 
+  %div
+    = form.submit "Create"

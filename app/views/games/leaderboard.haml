@@ -1,0 +1,7 @@
+%meta{:content => "10", "http-equiv" => "refresh"}
+%table.table
+  - @teams.sort_by(&:max_miles).reverse.each do |team|
+    - if team.max_miles > 0
+      %tr
+        %td= team.name
+        %td= team.max_miles

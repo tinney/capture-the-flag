@@ -1,0 +1,9 @@
+%h3== Move Player for Team #{@player.team.name}
+
+= form_with url: player_moves_path(@player), data: {remote: false} do |form|
+  %div
+    %label
+      direction
+      = form.select(:direction, ["North", "East", "South", "West"])
+  %div
+    = form.submit "Move"

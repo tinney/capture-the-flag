@@ -1,0 +1,25 @@
+.row
+  .col
+    %h3 Teams
+  .col
+    .float-right= link_to 'New Team', new_team_path, class: 'btn btn-primary btn-sm'
+.row
+  .col
+    %br
+.row
+  %table.table
+    %thead
+      %th ID
+      %th Name
+      %th Max Miles
+      %th Attempts
+      %th
+    %tbody
+      - @teams.each do |team|
+        %tr
+          %td
+            = team.id
+          %td= team.name
+          %td= team.max_miles
+          %td= team.players.count
+          %td= link_to "View", team_path(team), class: 'btn btn-primary btn-sm'
