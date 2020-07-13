@@ -20,7 +20,7 @@ consumer.subscriptions.create({ channel: "PlayersChannel" }, {
 
     window.app.ticker.addOnce((delta) => {
       if (data.action === "moved") {
-          window.movePlayer(data.id, data.x, data.y) 
+        window.movePlayer(data.id, data.x, data.y) 
       }
     });
   },

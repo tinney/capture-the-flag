@@ -22,17 +22,16 @@ class Game < ApplicationRecord
     Player.on_x(x).or(Player.on_y(y)).active.where.not(id: player.id).all
   end
 
-  def self.create_food_resource_at_location(x:, y:, amount:)
+  def self.create(x:, y:, amount:)
     return if amount <= 0
 
     Resource.create!(x_location: x, y_location: y, is_food: true, is_water: false, amount: amount)
   end
   
-  def self.create_random_food_resource
+  def self.create_flag(team_id)
     x_location = rand(1...BOARD_WIDTH)
     y_location = rand(1...BOARD_HEIGHT)
-    amount = rand(MAX_FOOD_AMOUNT)
 
-    Resource.create!(x_location: x_location, y_location: y_location, is_food: true, is_water: false, amount: amount)
+    Flag.create!(team_id: team_id, x_location: x_location, y_location: y_location)
   end
 end

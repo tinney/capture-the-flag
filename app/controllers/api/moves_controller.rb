@@ -1,7 +1,5 @@
 class Api::MovesController < Api::ApplicationController
   def create
-    player = team_active_player
-
     render(json: {error: "You do not have an active player. Post to /api/players to create a new player."}, :status => :bad_request) and return unless player
 
     GameEngine.take_turn(player, direction.upcase)
@@ -10,12 +8,7 @@ class Api::MovesController < Api::ApplicationController
     render json: {
       player: player.as_json(
         only: [
-          :water_count,
-          :food_count,
-          :days_without_water,
-          :days_without_food,
-          :active,
-          :days_active
+          :has_peg,
         ],
         methods: [:x, :y]
       ),
@@ -26,9 +19,5 @@ class Api::MovesController < Api::ApplicationController
   private
   def direction
     params[:direction]
-  end
-
-  def team_active_player
-    team.active_player
   end
 end

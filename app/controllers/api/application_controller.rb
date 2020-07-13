@@ -2,15 +2,15 @@ class Api::ApplicationController < ApplicationController
   before_action :require_team
 
   def require_team
-    render(json: {error: "No Team ID passed in request header"}, :status => :bad_request) and return unless team_id
-    render(json: {error: "Team not found for ID #{team_id}"}, :status => :bad_request) and return unless team
+    render(json: {error: "No Player ID passed in request header"}, :status => :bad_request) and return unless player_id
+    render(json: {error: "Player not found for ID #{player_id}"}, :status => :bad_request) and return unless team
   end
 
-  def team_id
-    request.headers["HTTP_TEAM"] || request.headers["HTTP_Team"] || request.headers["HTTP_team"]
+  def player_id
+    request.headers["HTTP_PLAYER"] || request.headers["HTTP_Player"] || request.headers["HTTP_player"]
   end
 
-  def team
-    Team.find_by(id: team_id)
+  def player
+    Player.find_by(id: player_id)
   end
 end

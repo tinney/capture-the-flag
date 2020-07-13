@@ -1,6 +1,6 @@
 - content_for :js do
   %script
-    window.onload = function() { startGame(#{@players_json.html_safe}, #{@resources.to_json.html_safe}) }
+    window.onload = function() { startGame(#{@players_json.html_safe}) }
 
 %style
   body { 

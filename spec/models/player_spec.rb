@@ -2,23 +2,15 @@
 #
 # Table name: players
 #
-#  id                 :bigint           not null, primary key
-#  team_id            :integer
-#  name               :string
-#  water_stat         :integer          not null
-#  food_stat          :integer          not null
-#  stamina_stat       :integer          not null
-#  strength_stat      :integer          not null
-#  active             :boolean          default(TRUE), not null
-#  days_active        :integer          default(0), not null
-#  days_without_water :integer          default(0), not null
-#  days_without_food  :integer          default(0), not null
-#  water_count        :integer          not null
-#  food_count         :integer          not null
-#  x_location         :integer          not null
-#  y_location         :integer          not null
-#  created_at         :datetime         not null
-#  updated_at         :datetime         not null
+#  id         :bigint           not null, primary key
+#  team_id    :integer
+#  name       :string
+#  active     :boolean          default(TRUE), not null
+#  x_location :integer          not null
+#  y_location :integer          not null
+#  created_at :datetime         not null
+#  updated_at :datetime         not null
+#  has_peg    :boolean          default(FALSE)
 #
 
 RSpec.describe 'Player' do

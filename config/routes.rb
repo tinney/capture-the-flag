@@ -11,11 +11,10 @@ Rails.application.routes.draw do
 
   match 'api/player' => 'api/players#show', :via => :get
   namespace 'api' do
-    resources :players, only: [:create]
-    resources :moves, only:   [:create]
+    resources :players, only: [:show]
+    resources :moves,   only: [:create]
   end
 
   get 'leaderboard', to: 'games#leaderboard'
-
   root to: 'games#index'
 end

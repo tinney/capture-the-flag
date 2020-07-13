@@ -7,8 +7,6 @@
   SOUTH = 'SOUTH'.freeze
   WEST = 'WEST'.freeze
 
-  PLAYER_STAT_LIMIT = 20.freeze # used to limit the number of points a player can have
-  MAX_DAYS_WITHOUT_WATER = 5
-  MAX_DAYS_WITHOUT_FOOD = 10
-  MAX_RESOURCE_AMOUNT = 1000.freeze # used for water
-  MAX_FOOD_AMOUNT = 20.freeze # used for generating food
+  POINTS_FOR_FLAG_CAPTURE = 25.freeze
+  POINTS_FOR_FLAG_RETURN = 10.freeze
+  POINTS_FOR_PEG_CAPTURE = 5.freeze

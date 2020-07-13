@@ -3,8 +3,7 @@ import { SSL_OP_EPHEMERAL_RSA } from 'constants';
 
 
 const loader = new PIXI.Loader()
-const players_container = new PIXI.Container()
-const resource_container = new PIXI.Container()
+const sprite_container = new PIXI.Container()
 const BOARD_WIDTH = 40
 const BOARD_HEIGHT = 30
 const BOARD_MULTIPLIER = 20
@@ -14,82 +13,49 @@ const TEXT_SETTING = {fontSize: 20, align: 'center', fontFamily: 'Courier', drop
 const app = new PIXI.Application({ width: BOARD_MULTIPLIER * BOARD_WIDTH, height: BOARD_HEIGHT * BOARD_MULTIPLIER, transparent: true, antialias: true, resolution: 1, });
 
 window.app = app;
-// TODO update to be a single sprite container
-window.players = [];
-window.resources = [];
+window.sprites = [];
 
-function setup(players, resources) {
+function setup(sprites) {
   var target = document.getElementsByClassName("canvas-target");
   target[0].appendChild(app.view);
-  app.stage.addChild(resource_container);
-  app.stage.addChild(players_container);
-  addPlayers(players)
-  addResources(resources)
+  app.stage.addChild(sprite_container);
+
+  sprites.forEach(addSprite)
 }
 
-function addPlayers(players) {
-  players.forEach(addPlayer)
+function moveSprite(id, x, y) {
+  window.sprites[id].position.set(x * BOARD_MULTIPLIER, y * BOARD_MULTIPLIER)
 }
 
-function movePlayer(id, x, y) {
-  window.players[id].position.set(x * BOARD_MULTIPLIER, y * BOARD_MULTIPLIER)
+function addSprite(sprite) {
+  // if (resource.is_food == true) {
+  //   sprite_text = '🌴';
+  // }
+  let new_sprite = new PIXI.Text('💚', TEXT_SETTING) // TODO: This needs to come from the sprite
+  new_sprite.x = sprite.x * BOARD_MULTIPLIER
+  new_sprite.y = sprite.y * BOARD_MULTIPLIER
+
+  sprite_container.addChild(new_sprite);
+  window.sprites[sprite.id] = new_sprite
 }
 
-function addPlayer(player) {
-  let sprite = new PIXI.Text('💚', TEXT_SETTING)
-  sprite.x = player.x * BOARD_MULTIPLIER
-  sprite.y = player.y * BOARD_MULTIPLIER
-
-  players_container.addChild(sprite);
-  window.players[player.id] = sprite
+function removeSprite(id) {
+  let sprite = window.sprites[id]
+  window.sprites[id] = null;
+  sprite_container.removeChild(sprite);
 }
+window.addSprite = addSprite
+window.removeSprite = removeSprite
+window.moveSprite = moveSprite
 
-function addResources(resources) {
-  resources.forEach(addResource)
-}
-
-function removeResource(id) {
-  let resource = window.resources[id];
-  window.resources[id] = null;
-  resource_container.removeChild(resource);
-}
-
-function removePlayer(id) {
-  let resource = window.players[id]
-  window.players[id] = null;
-  players_container.removeChild(resource);
-}
-
-function addResource(resource) {
-  let sprite_text = '💧';
-  if (resource.is_food == true) {
-    sprite_text = '🌴';
-  }
-  
-  let sprite = new PIXI.Text(sprite_text, TEXT_SETTING)
-  sprite.x = resource.x * BOARD_MULTIPLIER
-  sprite.y = resource.y * BOARD_MULTIPLIER
-
-  resource_container.addChild(sprite);
-  window.resources[resource.id] = sprite
-}
-
-window.addPlayer = addPlayer
-window.removePlayer = removePlayer
-window.removeResource = removeResource
-window.movePlayer = movePlayer
-window.addResource = addResource
-
-window.startGame = function(players, resources) {
+window.startGame = function(sprites) {
   const f = function() {
-    setup(players, resources);
+    setup(sprites);
   }
   loader.load(f);
 }
 
 window.startMoves = function(moves) {
-  console.log(moves)
-
   let myGraph = new PIXI.Graphics();
 
   var target = document.getElementsByClassName("canvas-target");

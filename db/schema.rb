@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_01_14_011432) do
+ActiveRecord::Schema.define(version: 2020_07_12_231243) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -33,37 +33,23 @@ ActiveRecord::Schema.define(version: 2020_01_14_011432) do
   create_table "players", force: :cascade do |t|
     t.integer "team_id"
     t.string "name"
-    t.integer "water_stat", null: false
-    t.integer "food_stat", null: false
-    t.integer "stamina_stat", null: false
-    t.integer "strength_stat", null: false
     t.boolean "active", default: true, null: false
-    t.integer "days_active", default: 0, null: false
-    t.integer "days_without_water", default: 0, null: false
-    t.integer "days_without_food", default: 0, null: false
-    t.integer "water_count", null: false
-    t.integer "food_count", null: false
     t.integer "x_location", null: false
     t.integer "y_location", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-  end
-
-  create_table "resources", force: :cascade do |t|
-    t.integer "x_location", default: 0, null: false
-    t.integer "y_location", default: 0, null: false
-    t.integer "amount", default: 1, null: false
-    t.boolean "active", default: true, null: false
-    t.boolean "is_water", default: false, null: false
-    t.boolean "is_food", default: false, null: false
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.boolean "has_peg", default: false
   end
 
   create_table "teams", force: :cascade do |t|
     t.string "name", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.integer "points", default: 0
+    t.integer "flag_x_location"
+    t.integer "flag_y_location"
+    t.integer "flag_holder_id"
+    t.boolean "flag_found", default: false
   end
 
 end

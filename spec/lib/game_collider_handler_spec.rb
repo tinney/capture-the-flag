@@ -1,140 +1,147 @@
 require 'rails_helper'
 
 RSpec.describe 'GameColliderHandler' do
-  describe '#handle_collisions' do
-    let(:starting_resource_count) { 0 }
-    let(:water_stat) { 5 }
-    let(:food_stat) { 5 }
-    let(:strength_stat) { 5 }
-    let(:days_active) { 100 }
+  let(:team) { create(:team) }
+  let(:opponent_team) { create(:team) }
+  let(:player) { create(:player, :con_peg, team: team) }
+  let(:opponent) { create(:player, :con_peg, team: opponent_team) }
 
-    let(:player) { create(:player, food_count: starting_resource_count, water_count: starting_resource_count, strength_stat: strength_stat, food_stat: food_stat, water_stat: water_stat, stamina_stat: 1, days_active: days_active ) }
-    
-    context 'when there is no resources for the location' do
-      let(:resources) { [] }
+  describe '#handle_in_opponent_base_collisions' do 
+    context 'when a player moves to an empty square' do
+      it 'is a no-op' do
+        GameColliderHandler.handle_in_opponent_base_collisions(player: player, opponents: [], on_flag: false)
 
-      it 'does nothing' do
-        GameColliderHandler.handle_collisions(player, resources)
-        expect(player.food_count).to equal(starting_resource_count)
-        expect(player.water_count).to equal(0)
+        expect(player.has_peg?).to equal(true)
+        expect(player.has_flag?).to equal(false)
+        expect(team.points).to equal(0)
+        expect(opponent_team.points).to equal(0)
       end
     end
-    
-    context 'when the resource is an an opponent' do
-      let(:food_count) { 10 }
-      let(:opponent) { create(:player, strength_stat: 2, food_stat: 10, food_count: food_count) }
-      let(:resources) { [opponent] }
 
-      context "when the player has less strength" do
-        let(:strength_stat) { 1 }
+    context 'w/ a peg' do
+      let(:player) { create(:player, :con_peg, team: team) }
+      
+      context 'when a player moves onto an opponent' do
       end
 
-      context "when the player has more strength" do
-        let(:strength_stat) { 5 }
-        
-        context "when the opponent has food" do
-          let(:food_count) { 10 }
+      context 'when a player moves onto the opponents flag' do
+        it 'picks up the flag' do
+          expect(player.has_flag?).to equal(false)
+          expect(opponent_team.flag_found?).to equal(false)
+          expect(opponent_team.flag_held?).to equal(false)
 
-          it 'fills up the players food removing it from the opponent' do
-            GameColliderHandler.handle_collisions(player, resources)
-            opponent.reload
-            player.reload
-            
-            expect(opponent.food_count).to equal(food_count - food_stat)
-            expect(player.food_count).to equal(food_stat)
-            expect(player.water_count).to equal(starting_resource_count)
-          end
-          
-          context 'when the player only needs a little food' do
-            let(:starting_resource_count) { 4 }
-            
-            it 'only takes as much food as the player needs' do
-              GameColliderHandler.handle_collisions(player, resources)
-              opponent.reload
-              player.reload
-              
-              expect(opponent.food_count).to equal(food_count - 1)
-              expect(player.food_count).to equal(food_stat)
-              expect(player.water_count).to equal(starting_resource_count)
-            end
-          end
-          
+          GameColliderHandler.handle_in_opponent_base_collisions(player: player, opponents: [opponent], on_flag: true)
 
-          context "when the opponent has a little food" do
-            let(:food_count) { 3 }
-
-            it 'takes as much of the opponents food as it can' do
-              GameColliderHandler.handle_collisions(player, resources)
-
-              opponent.reload
-              player.reload
-              
-              expect(opponent.food_count).to equal(0)
-              expect(player.food_count).to equal(food_count)
-              expect(player.water_count).to equal(starting_resource_count)
-            end
-          end
-        end
-
-        context "when the opponent has no food" do
-          let(:food_count) { 0 }
-          
-          it 'is a no op' do
-            GameColliderHandler.handle_collisions(player, resources)
-            expect(opponent.food_count).to equal(starting_resource_count)
-            expect(player.food_count).to equal(starting_resource_count)
-            expect(player.water_count).to equal(starting_resource_count)
-          end
+          expect(player.has_flag?).to equal(true)
+          opponent_team.reload
+          expect(opponent_team.flag_found?).to equal(true)
+          expect(opponent_team.flag_held?).to equal(true)
         end
       end
     end
     
-    context 'when the resource is water' do
-      let(:resources) { [create(:resource, is_water: true, amount: 100)] }
+    context 'w/o a peg' do
+      let(:player) { create(:player, :sans_peg, team: team) }
 
-      it 'fills the players water' do
-        GameColliderHandler.handle_collisions(player, resources)
-        expect(player.food_count).to equal(0)
-        expect(player.water_count).to equal(water_stat)
+      context 'when a player moves onto an opponent' do
+        it 'is a no-op' do
+          GameColliderHandler.handle_in_opponent_base_collisions(player: player, opponents: [opponent], on_flag: false)
+
+          expect(player.has_peg?).to equal(false)
+          expect(player.has_flag?).to equal(false)
+          expect(team.points).to equal(0)
+          expect(opponent_team.points).to equal(0)
+        end
+      end
+    end
+  end
+
+  describe '#handle_in_team_base_collisions' do
+    context 'when a player moves to an empty square' do
+      it 'is a no-op' do
+        GameColliderHandler.handle_in_team_base_collisions(player: player, opponents: [])
+
+        expect(player.has_peg?).to equal(true)
+        expect(player.has_flag?).to equal(false)
+        expect(team.points).to equal(0)
+      end
+
+      context 'when the player has the flag' do
+        it 'awards the ponits and resets the opponents flag' do
+          opponent_team = create(:team, flag_holder_id: player.id, flag_found: true)
+          expect(player.has_peg?).to equal(true)
+          expect(player.has_flag?).to equal(true)
+          expect(team.points).to equal(0)
+          expect(opponent_team.flag_found?).to equal(true)
+          expect(opponent_team.flag_held?).to equal(true)
+
+          GameColliderHandler.handle_in_team_base_collisions(player: player, opponents: [])
+
+          expect(player.has_peg?).to equal(true)
+          expect(player.has_flag?).to equal(false)
+          expect(team.points).to equal(POINTS_FOR_FLAG_CAPTURE)
+          opponent_team.reload
+          expect(opponent_team.flag_found?).to equal(false)
+          expect(opponent_team.flag_held?).to equal(false)
+        end
       end
     end
 
-    context 'when the resource is food' do
-      let(:resources) { [resource] }
+    context 'when a player moves onto an opponent' do
+      context 'with a peg' do
+        it 'removes the peg and awards the players team points' do
+          opponent = create(:player, :con_peg, team: opponent_team)
 
-      context "when there is not enough food to fill the player container" do
-        let(:food_amount) { 3 }
-        let(:resource) { create(:resource, is_food: true, is_water: false, amount: food_amount, active: true) }
+          expect(player.has_peg?).to equal(true)
+          expect(opponent.has_peg?).to equal(true)
+          expect(team.points).to equal(0)
 
-        it 'takes all the food and and deactivates the food' do
-          player = create(:player, water_count: 0, food_count: 0, food_stat: 5)
-          GameColliderHandler.handle_collisions(player, resources)
+          GameColliderHandler.handle_in_team_base_collisions(player: player, opponents: [opponent])
 
-          resource.reload
-
-          expect(player.food_count).to equal(food_amount)
-          expect(player.water_count).to equal(0)
-
-          expect(resource.amount).to equal(0)
-          expect(resource.active).to equal(false)
+          expect(player.has_peg?).to equal(true)
+          expect(opponent.has_peg?).to equal(false)
+          expect(team.points).to equal(POINTS_FOR_PEG_CAPTURE)
         end
       end
 
-      context "when there is enough food to fill the player container" do
-        let(:food_amount) { 10 }
-        let(:resource) { create(:resource, is_food: true, is_water: false, amount: food_amount, active: true) }
+      context 'without a peg' do
+        it 'is a no-op' do
+          opponent = create(:player, :sans_peg, team: opponent_team)
 
-        it 'fills the players food and leaves the food active decrementing the food amount' do
-          player = create(:player, water_count: 0, food_count: 0, food_stat: 5)
-          GameColliderHandler.handle_collisions(player, resources)
+          expect(player.has_peg?).to equal(true)
+          expect(opponent.has_peg?).to equal(false)
+          expect(team.points).to equal(0)
 
-          resource.reload
+          GameColliderHandler.handle_in_team_base_collisions(player: player, opponents: [opponent])
 
-          expect(player.food_count).to equal(food_stat)
-          expect(player.water_count).to equal(0)
+          expect(player.has_peg?).to equal(true)
+          expect(opponent.has_peg?).to equal(false)
+          expect(team.points).to equal(0)
+        end
+      end
 
-          expect(resource.amount).to equal(food_amount - food_stat)
-          expect(resource.active).to equal(true)
+      context 'with the flag' do
+        it 'removes the flag, peg and awards points' do
+          opponent = create(:player, :con_peg, team: opponent_team)
+          team.take_flag!(opponent)
+
+          expect(player.has_peg?).to equal(true)
+          expect(player.has_flag?).to equal(false)
+          expect(team.points).to equal(0)
+          expect(team.flag_found?).to equal(true) # denotes if the opponenets can see the flag
+          expect(team.flag_held?).to equal(true)
+          expect(opponent.has_peg?).to equal(true)
+          expect(opponent.has_flag?).to equal(true)
+
+          GameColliderHandler.handle_in_team_base_collisions(player: player, opponents: [opponent])
+
+          expect(player.has_peg?).to equal(true)
+          expect(player.has_flag?).to equal(false)
+          expect(team.points).to equal(POINTS_FOR_FLAG_RETURN + POINTS_FOR_PEG_CAPTURE)
+          expect(team.flag_found?).to equal(true)
+          expect(team.flag_held?).to equal(false)
+          expect(opponent.has_peg?).to equal(false)
+          expect(opponent.has_flag?).to equal(false)
         end
       end
     end

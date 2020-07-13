@@ -1,22 +1,49 @@
 class GameColliderHandler
-  def self.handle_collisions(player, resources)
-    resources.each do |resource|
-      if resource.is_water?
-        player.fill_water!(resource.amount)
-      elsif resource.is_food?
-        food = resource.remove_resource!(player.food_amount_needed)
-        player.fill_food!(food)
-      elsif resource.is_player?
-        if player.strength_stat > resource.strength_stat
-          food = resource.remove_food!(player.food_amount_needed)
-          player.fill_food!(food)
-        else
-          food = player.remove_food!(resource.food_amount_needed)
-          resource.fill_food!(food)
-        end
-      else
-        raise "unknown resource"
+  class << self
+    def handle_in_team_base_collisions(player:, opponents:)
+      return unless opponents.present? || player.has_flag?
+
+      capture_flag!(player) if player.has_flag?
+
+      opponents.each do |opponent|
+        remove_flag!(player.team) if opponent.has_flag?
+        remove_peg!(opponent, player.team) if opponent.has_peg?
       end
+    end
+
+    def handle_in_opponent_base_collisions(player:, opponents:, on_flag:)
+      return unless opponents.present? || on_flag
+
+      pickup_flag!(player.opponent_team, player) if on_flag
+
+      opponents.each do |opponent|
+        #todo not sure what should happen here
+      end
+    end
+
+    private
+
+    def capture_flag!(player)
+      player.opponent_team.capture_flag!
+      award_points(player.team, POINTS_FOR_FLAG_CAPTURE)
+    end
+
+    def pickup_flag!(team, player)
+      team.update!(flag_found: true, flag_holder_id: player.id)
+    end
+
+    def remove_flag!(team)
+      team.update!(flag_holder_id: nil)
+      award_points(team, POINTS_FOR_FLAG_RETURN)
+    end
+
+    def remove_peg!(opponent, team)
+      opponent.update!(has_peg: false)
+      award_points(team, POINTS_FOR_PEG_CAPTURE)
+    end
+
+    def award_points(team, points)
+      team.update!(points: team.points + points)
     end
   end
 end
