@@ -6,8 +6,8 @@ class GameColliderHandler
       capture_flag!(player) if player.has_flag?
 
       opponents.each do |opponent|
-        remove_flag!(player.team) if opponent.has_flag?
-        remove_peg!(opponent, player.team) if opponent.has_peg?
+        replace_team_flag!(player.team) if opponent.has_flag?
+        remove_peg!(opponent) if opponent.has_peg?
       end
     end
 
@@ -17,7 +17,7 @@ class GameColliderHandler
       pickup_flag!(player.opponent_team, player) if on_flag
 
       opponents.each do |opponent|
-        #todo not sure what should happen here
+        remove_peg!(player) if opponent.has_peg?
       end
     end
 
@@ -32,14 +32,14 @@ class GameColliderHandler
       team.update!(flag_found: true, flag_holder_id: player.id)
     end
 
-    def remove_flag!(team)
+    def replace_team_flag!(team)
       team.update!(flag_holder_id: nil)
       award_points(team, POINTS_FOR_FLAG_RETURN)
     end
 
-    def remove_peg!(opponent, team)
-      opponent.update!(has_peg: false)
-      award_points(team, POINTS_FOR_PEG_CAPTURE)
+    def remove_peg!(player)
+      player.update!(has_peg: false)
+      award_points(player.opponent_team, POINTS_FOR_PEG_CAPTURE)
     end
 
     def award_points(team, points)

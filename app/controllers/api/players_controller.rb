@@ -10,12 +10,12 @@ class Api::PlayersController < Api::ApplicationController
         ],
         methods: [:x, :y]
       ),
-      board: resources_near_me,
+      board: opponents_near_me,
     }
   end
 
   private
-  def resources_near_me
+  def opponents_near_me
     Game.get_resources_around_player(player)
   end
 end

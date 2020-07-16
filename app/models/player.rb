@@ -11,6 +11,7 @@
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
 #  has_peg    :boolean          default(FALSE)
+#  icon       :string           default("💚")
 #
 
 class Player < ApplicationRecord
@@ -24,34 +25,34 @@ class Player < ApplicationRecord
   after_update :broadcast_update
 
   scope :active, -> { where(active: true) }
-  scope :on_x, -> (x) { where(x_location: x) }
-  scope :on_y, -> (y) { where(y_location: y) }
+
+  scope :at_location, -> (x:, y:){ where(x_location: x, y_location: y) }
+  scope :on_team, -> (team_id) { where(team_id: team_id) }
+
+  scope :within_range_of, -> (range:, x:, y:) do
+    x_range = [(x-range)..(x+range)]
+    y_range = [(y-range)..(y+range)]
+    where(x_location: x_range, y_location: y_range)
+  end
+
+  def range
+    DEFAULT_SIGHT_AREA
+  end
+
+  def is_in_base?
+    team.coordinates_in_base(x: x, y: y)
+  end
 
   def as_json(options = {})
     super({
       only: [],
-      methods: [:x, :y, :is_flag, :is_player]
+      methods: [:x, :y]
     }.merge(options))
   end
 
-  def opponent_team
-    Team.where.not(id: team_id).first
-  end
-
-  def is_flag?
-    false
-  end
-
-  def is_flag
-    false
-  end
-
-  def is_player?
-    true
-  end
-  
-  def is_player
-    true
+  def move_to!(new_x:, new_y:)
+    moves.create!(x_location: new_x, y_location: new_y)
+    update!(x_location: new_x, y_location: new_y)
   end
 
   def set_location
@@ -62,8 +63,16 @@ class Player < ApplicationRecord
     self.moves.build(x_location: x_location, y_location: y_location)
   end
 
+  def opponent_team
+    team.opponent
+  end
+
   def has_flag?
-    Team.where(flag_holder_id: id).exists?
+    opponent_team.flag_holder_id == id
+  end
+
+  def has_flag
+    has_flag?
   end
 
   def x

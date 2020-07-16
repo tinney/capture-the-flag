@@ -22,30 +22,12 @@
       %table.table
         %thead
           %th Location
-          %th 💧Size
-          %th 🌭Size
-          %th Stamina
-          %th Strength
-          %th 💧
-          %th 🌭
-          %th w/o 💧
-          %th w/o 🌭
-          %th Moves
           %th State
           %th View
         %tbody
           - @team.players.order(:created_at).each do |player|
             %tr
               %td== #{player.x}, #{player.y}
-              %td= player.water_stat
-              %td= player.food_stat
-              %td= player.stamina_stat
-              %td= player.strength_stat
-              %td= player.water_count
-              %td= player.food_count
-              %td= player.days_without_water
-              %td= player.days_without_food
-              %td= player.days_active
               %td
                 -if player.active
                   😄

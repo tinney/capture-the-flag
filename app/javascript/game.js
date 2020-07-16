@@ -4,8 +4,8 @@ import { SSL_OP_EPHEMERAL_RSA } from 'constants';
 
 const loader = new PIXI.Loader()
 const sprite_container = new PIXI.Container()
-const BOARD_WIDTH = 40
-const BOARD_HEIGHT = 30
+const BOARD_WIDTH = 80
+const BOARD_HEIGHT = 40 
 const BOARD_MULTIPLIER = 20
 const TEXT_SETTING = {fontSize: 20, align: 'center', fontFamily: 'Courier', dropShadow: true,  dropShadowBlur: '4', dropShadowAlpha: '0.75', dropShadowDistance: '5'}
 
@@ -31,7 +31,7 @@ function addSprite(sprite) {
   // if (resource.is_food == true) {
   //   sprite_text = '🌴';
   // }
-  let new_sprite = new PIXI.Text('💚', TEXT_SETTING) // TODO: This needs to come from the sprite
+  let new_sprite = new PIXI.Text(sprite.icon, TEXT_SETTING) // TODO: This needs to come from the sprite
   new_sprite.x = sprite.x * BOARD_MULTIPLIER
   new_sprite.y = sprite.y * BOARD_MULTIPLIER
 

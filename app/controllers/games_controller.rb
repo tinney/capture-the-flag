@@ -1,7 +1,7 @@
 class GamesController < ApplicationController
   def index
     @players = Player.active.all
-    @players_json = @players.to_json(only: [:id], methods: [:x, :y])
+    @players_json = @players.to_json(only: [:id, :icon], methods: [:x, :y])
   end
 
   def leaderboard

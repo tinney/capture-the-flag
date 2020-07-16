@@ -11,11 +11,13 @@
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
 #  has_peg    :boolean          default(FALSE)
+#  icon       :string           default("💚")
 #
 
 FactoryBot.define do
   factory :player do
-    association :team
+    team
+
     name { 'Player 1' }
     active { true }
     x_location { nil }

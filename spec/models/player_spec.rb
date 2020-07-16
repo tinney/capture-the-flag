@@ -11,23 +11,14 @@
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
 #  has_peg    :boolean          default(FALSE)
+#  icon       :string           default("💚")
 #
 
+require 'rails_helper'
+
 RSpec.describe 'Player' do
-  context 'validations' do
-    it 'limits the total stats to 20' do
-      subject = build(:player, water_stat: 30)
-      expect(subject).to_not be_valid
-    end
-
-    it 'requires defaults stats' do
-      subject = build(:player, water_stat: nil)
-      expect(subject).not_to be_valid
-    end
-
-    it 'creates a move when started' do
-      subject = create(:player)
-      expect(subject.moves.size).to equal(1)
-    end
+  it 'creates a move when started' do
+    player = create(:player)
+    expect(player.moves.size).to equal(1)
   end
 end

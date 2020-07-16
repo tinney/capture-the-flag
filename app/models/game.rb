@@ -10,22 +10,14 @@
 #
 
 class Game < ApplicationRecord
-  def self.get_resources_at_location(x:, y:)
-    Resource.where(active: true, x_location: x, y_location: y) + Player.where(active: true, x_location: x, y_location: y).all
+  has_many :fields
+
+  def self.get_opponents_at_location(x:, y:)
+    Player.where(active: true, x_location: x, y_location: y)
   end
 
   def self.get_resources_around_player(player)
-    x = player.x
-    y = player.y
-
-    Resource.on_x(x).or(Resource.on_y(y)).active.all +
-    Player.on_x(x).or(Player.on_y(y)).active.where.not(id: player.id).all
-  end
-
-  def self.create(x:, y:, amount:)
-    return if amount <= 0
-
-    Resource.create!(x_location: x, y_location: y, is_food: true, is_water: false, amount: amount)
+    Player.within_range_of(range: player.range, x: player.x, y: player.y).active.where.not(id: player.id).all
   end
   
   def self.create_flag(team_id)

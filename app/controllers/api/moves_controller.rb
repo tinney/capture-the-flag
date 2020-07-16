@@ -1,6 +1,6 @@
 class Api::MovesController < Api::ApplicationController
   def create
-    render(json: {error: "You do not have an active player. Post to /api/players to create a new player."}, :status => :bad_request) and return unless player
+    render(json: {error: "You do not have an active player. Update /api/player to activate your player."}, :status => :bad_request) and return unless player
 
     GameEngine.take_turn(player, direction.upcase)
     resources = Game.get_resources_around_player(player)
@@ -8,11 +8,13 @@ class Api::MovesController < Api::ApplicationController
     render json: {
       player: player.as_json(
         only: [
+          :active,
           :has_peg,
         ],
-        methods: [:x, :y]
+        methods: [:x, :y, :has_flag]
       ),
-      board: resources,
+      opponent_team: player.opponent_team,
+      opponents: resources,
     }
   end
 

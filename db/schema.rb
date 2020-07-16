@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_07_12_231243) do
+ActiveRecord::Schema.define(version: 2020_07_15_023426) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -39,6 +39,7 @@ ActiveRecord::Schema.define(version: 2020_07_12_231243) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.boolean "has_peg", default: false
+    t.string "icon", default: "💚"
   end
 
   create_table "teams", force: :cascade do |t|
@@ -50,6 +51,7 @@ ActiveRecord::Schema.define(version: 2020_07_12_231243) do
     t.integer "flag_y_location"
     t.integer "flag_holder_id"
     t.boolean "flag_found", default: false
+    t.integer "field_side", default: 0
   end
 
 end

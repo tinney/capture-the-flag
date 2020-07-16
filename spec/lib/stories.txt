@@ -1,0 +1,33 @@
+
+Speed is capped with flag carry to 1/2 Speed
+
+Story 99: 
+Attributes for players? Agility, Speed, Visibility/Hide, Distance of Sight
+
+Story 100: 
+Can team see own flag location? 
+
+Story 101
+Can team sit on their own flag location? 
+
+Story 102
+
+
+
+
+
+
+
+
+
+
+
+0 - 10      10 - 20
+P........|........
+.........|........
+.........|........
+.........|........
+
+
+location: [9,10]
+players: [[10,10]]
