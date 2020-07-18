@@ -3,22 +3,16 @@
     window.onload = function() { startGame(#{@players_json.html_safe}) }
 
 %style
-  body { 
-  background: linear-gradient(to bottom, #2193b0, #6dd5ed);
-  background-size: cover;
-  background-repeat: no-repeat;
-  width: 100%;
+  html {
   height: 100%;
   }
+  body {
+  background: linear-gradient(0.25turn, #5D917D, #A9AD7F, #5D917D);
+  background-size: cover;
+  background-repeat: no-repeat;
+  min-height: 100%;
+  } 
 
-.board
-  .cell.top.left
-  .cell.top.center
-  .cell.top.right
-  .middle.cell.left
-  .middle.cell.center
-    .canvas-target
-  .middle.cell.right
-  .bottom.cell.left
-  .bottom.cell.center
-  .bottom.cell.right
+
+.field
+  .canvas-target

@@ -4,14 +4,4 @@
   %script
     window.onload = function() { startMoves(#{@player.moves.to_json.html_safe}) }
 
-.board
-  .cell.top.left
-  .cell.top.center
-  .cell.top.right
-  .middle.cell.left
-  .middle.cell.center
-    .canvas-target
-  .middle.cell.right
-  .bottom.cell.left
-  .bottom.cell.center
-  .bottom.cell.right
+.canvas-target
