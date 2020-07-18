@@ -3,6 +3,7 @@ require 'uri'
 require 'json'
 require 'pry'
 
+
 #TEAM_ID = "YOUR TEAM ID"
 
 # BASE_URL = "https://capture-the-flag.herokuapp.com/"
@@ -24,41 +25,28 @@ def make_request(api_endpoint, request_body)
     puts "failed #{e}"
 end
 
-def calcuclate_direction(x:, y:, board:)
-  if board.empty? # If there is nothing lets head either North or East
-    puts "No Resources heading either East or South"
-    return ["SOUTH", "EAST"].sample
-  end
+def calcuclate_direction(x:, y:, response:)
+  puts response
+  return ["SOUTH", "EAST", "NORTH", "WEST"].sample
+end
 
-  puts "Found resources"
-  resource = board.first
-  puts resource
-
-  if resource['x'] == x # Resource is above or below us
-    if resource['y'] > y
-      "SOUTH"
-    else
-      "NORTH"
-    end
-  else
-    if resource['x'] > x
-      "EAST"
-    else
-      "WEST"
-    end
-  end
+def get_direction
+  puts "Pick a direction: n,s,e,w"
+  gets.chomp
 end
 
 puts "Playing the game"
-response = make_request("players", {name: "Player w/ EQ Stats", water_stat: 5, food_stat: 5, stamina_stat: 5, strength_stat: 5})
-puts response
-sleep(3)
-
 puts "Moving the player around"
 
-10.times do
-  direction = calcuclate_direction(x: response["player"]["x"], y: response["player"]["y"], board: response["board"])
-  response = make_request("moves", { direction: direction })
+directions = { s: "SOUTH", e: "EAST", n: "NORTH", w: "WEST" } 
+
+while direction = get_direction do
   puts "Moving #{direction}"
-  sleep(1)
+  response = make_request("moves", { direction: directions[direction.to_sym] })
+  puts response
 end
+# 10.times do
+#   response = []
+#   direction = calcuclate_direction(x: response["player"]["x"], y: response["player"]["y"], response: response)
+#   sleep(1)
+# end

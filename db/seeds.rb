@@ -6,12 +6,13 @@
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
 
-Game.create!
+#Game.create!()
 blue_team = Team.create!(name: "Blue Team", field_side: :left_field)
-red_team = Team.create!(name: "Red Team" field_side: :right_field)
+red_team = Team.create!(name: "Red Team", field_side: :right_field)
 
 
-Player.create!(name: "Kyle Adams", team: blue_team, icon: '💛')
+Player.create!(name: "Dustin Tinney", team: blue_team, icon: '💛')
+# Player.create!(name: "Kyle Adams", team: blue_team, icon: '💛')
 # Player.create!(name: "Micah Adams", team: blue_team)
 # Player.create!(name: "Jason Allen", team: blue_team)
 # Player.create!(name: "Van Anderson", team: blue_team)
@@ -34,7 +35,7 @@ Player.create!(name: "Kyle Adams", team: blue_team, icon: '💛')
 # Player.create!(name: "Jason Karns", team: blue_team)
 # Player.create!(name: "Josh Klina", team: blue_team)
 
-Player.create!(name: "Jennifer Konikowski", team: red_team)
+Player.create!(name: "Jennifer Konikowski", team: red_team, icon: '💚')
 # Player.create!(name: "Kaleb Lape", team: red_team)
 # Player.create!(name: "Neal Lindsay", team: red_team)
 # Player.create!(name: "Adam Lukens", team: red_team)

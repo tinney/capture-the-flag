@@ -21,8 +21,8 @@ class Player < ApplicationRecord
 
   before_create :set_location
 
-  after_create :broadcast_create
-  after_update :broadcast_update
+  after_create :broadcast
+  after_update :broadcast
 
   scope :active, -> { where(active: true) }
 
@@ -68,7 +68,7 @@ class Player < ApplicationRecord
   end
 
   def has_flag?
-    opponent_team.flag_holder_id == id
+    opponent_team&.flag_holder_id == id
   end
 
   def has_flag
@@ -85,11 +85,7 @@ class Player < ApplicationRecord
   
   private
 
-  def broadcast_create
-    GameBroadcaster.broadcast_sprite_created(self)
-  end
-
-  def broadcast_update
-    GameBroadcaster.broadcast_sprite_moved(self) if self.active?
+  def broadcast
+    GameBroadcaster.update_board
   end
 end

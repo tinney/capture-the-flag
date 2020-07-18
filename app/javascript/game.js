@@ -11,42 +11,28 @@ const TEXT_SETTING = {fontSize: 20, align: 'center', fontFamily: 'Courier', drop
 
 // note game heights are duplicated
 const app = new PIXI.Application({ width: BOARD_MULTIPLIER * BOARD_WIDTH, height: BOARD_HEIGHT * BOARD_MULTIPLIER, transparent: true, antialias: true, resolution: 1, });
-
 window.app = app;
-window.sprites = [];
 
-function setup(sprites) {
+function setup(players) {
   var target = document.getElementsByClassName("canvas-target");
   target[0].appendChild(app.view);
   app.stage.addChild(sprite_container);
 
-  sprites.forEach(addSprite)
+  players.forEach(addSprite)
 }
 
-function moveSprite(id, x, y) {
-  window.sprites[id].position.set(x * BOARD_MULTIPLIER, y * BOARD_MULTIPLIER)
+window.redrawBoard = function(players) {
+  sprite_container.removeChildren();
+  players.forEach(addSprite)
 }
 
-function addSprite(sprite) {
-  // if (resource.is_food == true) {
-  //   sprite_text = '🌴';
-  // }
-  let new_sprite = new PIXI.Text(sprite.icon, TEXT_SETTING) // TODO: This needs to come from the sprite
+window.addSprite = function(sprite) {
+  let new_sprite = new PIXI.Text(sprite.icon, TEXT_SETTING)
   new_sprite.x = sprite.x * BOARD_MULTIPLIER
   new_sprite.y = sprite.y * BOARD_MULTIPLIER
 
   sprite_container.addChild(new_sprite);
-  window.sprites[sprite.id] = new_sprite
 }
-
-function removeSprite(id) {
-  let sprite = window.sprites[id]
-  window.sprites[id] = null;
-  sprite_container.removeChild(sprite);
-}
-window.addSprite = addSprite
-window.removeSprite = removeSprite
-window.moveSprite = moveSprite
 
 window.startGame = function(sprites) {
   const f = function() {
