@@ -58,8 +58,12 @@ class Player < ApplicationRecord
     update!(x_location: new_x, y_location: new_y)
   end
 
+  def field_side
+    team.field_side
+  end
+
   def set_location
-    location = team.random_player_location
+    location = MoveCalculator.random_player_location(field_side: field_side)
 
     self.x_location ||= location.first
     self.y_location ||= location.last 

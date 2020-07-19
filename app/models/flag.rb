@@ -45,7 +45,7 @@ class Flag < ApplicationRecord
   def y
     y_location
   end
-  
+
   def as_json(options = {})
     methods = revealed? ? [:held, :x, :y] : [:held]
 

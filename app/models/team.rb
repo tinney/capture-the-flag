@@ -17,19 +17,7 @@ class Team < ApplicationRecord
   enum field_side: [:left_field, :right_field]
 
   def coordinates_in_base(x:, y:)
-    if left_field?
-      x < FIELD_CENTER
-    else
-      x >= FIELD_CENTER
-    end
-  end
-
-  def max_x
-    left_field? ? (FIELD_CENTER-1) : BOARD_WIDTH
-  end
-  
-  def min_x
-    left_field? ? 0 : FIELD_CENTER
+    MoveCalculator.coordinates_in_base(x: x, field_side: field_side)
   end
 
   def opponent
@@ -40,21 +28,8 @@ class Team < ApplicationRecord
     flag.x_location = x && flag.y_location = y
   end
 
-  def random_player_location
-    random_player_offset = rand((BOARD_WIDTH / 2) - FLAG_DIVIDER)
-    x = left_field? ? random_player_offset + FLAG_DIVIDER : BOARD_WIDTH - FLAG_DIVIDER - random_player_offset
-    [x, rand(BOARD_HEIGHT)]
-  end
-
-
-  def random_flag_location
-    # either end depending of we're home or away and Y doesn't matter
-    x = left_field? ? rand(FLAG_DIVIDER) : BOARD_WIDTH - rand(FLAG_DIVIDER)
-    [x, rand(BOARD_HEIGHT)] 
-  end
-
   def hide_flag!
-    location = random_flag_location
+    location = MoveCalculator.random_flag_location(field_side: field_side)
     create_flag!(x_location: location.first, y_location: location.last)
   end
 
