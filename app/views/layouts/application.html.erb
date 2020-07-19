@@ -12,16 +12,15 @@
   </head>
   <style>
 
-    canvas { 
-      border: 4px dotted #F95F65;
-    }
-
     .field {
       position:relative;
       text-align:center;
+      min-width: 1600px;
+      max-width: 1600px;
+      border: 4px dotted #F95F65;
     }
 
-    .field:after {
+    .canvas-target:after {
       content:"";
       position: absolute;
       z-index: 10;

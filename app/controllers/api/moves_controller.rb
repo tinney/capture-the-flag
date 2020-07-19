@@ -11,9 +11,9 @@ class Api::MovesController < Api::ApplicationController
           :active,
           :has_peg,
         ],
-        methods: [:x, :y, :has_flag]
+        methods: [:x, :y, :has_flag, :is_in_base]
       ),
-      opponent_team: player.opponent_team,
+      flag: player.opponent_team.flag,
       opponents: resources,
     }
   end

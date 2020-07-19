@@ -1,7 +1,7 @@
 class AddPegToPlayer < ActiveRecord::Migration[6.0]
   def change
     change_table(:players) do |t|
-      t.boolean :has_peg, default: false
+      t.boolean :has_peg, default: true
 
       t.remove :water_stat
       t.remove :food_stat

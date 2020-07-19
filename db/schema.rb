@@ -10,10 +10,19 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_07_15_023426) do
+ActiveRecord::Schema.define(version: 2020_07_19_013121) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "flags", force: :cascade do |t|
+    t.boolean "captured", default: false
+    t.boolean "revealed", default: false
+    t.integer "player_id"
+    t.integer "team_id"
+    t.integer "x_location"
+    t.integer "y_location"
+  end
 
   create_table "games", force: :cascade do |t|
     t.string "name", null: false
@@ -38,7 +47,7 @@ ActiveRecord::Schema.define(version: 2020_07_15_023426) do
     t.integer "y_location", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.boolean "has_peg", default: false
+    t.boolean "has_peg", default: true
     t.string "icon", default: "💚"
   end
 
@@ -47,10 +56,6 @@ ActiveRecord::Schema.define(version: 2020_07_15_023426) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.integer "points", default: 0
-    t.integer "flag_x_location"
-    t.integer "flag_y_location"
-    t.integer "flag_holder_id"
-    t.boolean "flag_found", default: false
     t.integer "field_side", default: 0
   end
 

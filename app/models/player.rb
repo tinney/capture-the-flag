@@ -10,7 +10,7 @@
 #  y_location :integer          not null
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
-#  has_peg    :boolean          default(FALSE)
+#  has_peg    :boolean          default(TRUE)
 #  icon       :string           default("💚")
 #
 
@@ -18,11 +18,10 @@ class Player < ApplicationRecord
   validates :team_id, presence: true
   belongs_to :team
   has_many :moves
+  has_one :flag, -> { where(captured: false) }
 
   before_create :set_location
 
-  after_create :broadcast
-  after_update :broadcast
 
   scope :active, -> { where(active: true) }
 
@@ -43,6 +42,10 @@ class Player < ApplicationRecord
     team.coordinates_in_base(x: x, y: y)
   end
 
+  def is_in_base
+    is_in_base?
+  end
+
   def as_json(options = {})
     super({
       only: [],
@@ -60,7 +63,6 @@ class Player < ApplicationRecord
 
     self.x_location ||= location.first
     self.y_location ||= location.last 
-    self.moves.build(x_location: x_location, y_location: y_location)
   end
 
   def opponent_team
@@ -68,11 +70,15 @@ class Player < ApplicationRecord
   end
 
   def has_flag?
-    opponent_team&.flag_holder_id == id
+    flag.present?
   end
 
   def has_flag
-    has_flag?
+    flag.present?
+  end
+
+  def drop_flag!
+    flag.drop_flag!
   end
 
   def x
@@ -82,10 +88,9 @@ class Player < ApplicationRecord
   def y
     y_location
   end
-  
-  private
 
-  def broadcast
-    GameBroadcaster.update_board
+  def juke?
+    # should look at attributes maybe 20 / 80 or 40 / 60?  
+    return false
   end
 end

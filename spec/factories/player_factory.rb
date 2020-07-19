@@ -10,7 +10,7 @@
 #  y_location :integer          not null
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
-#  has_peg    :boolean          default(FALSE)
+#  has_peg    :boolean          default(TRUE)
 #  icon       :string           default("💚")
 #
 

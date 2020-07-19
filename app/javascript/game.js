@@ -7,31 +7,49 @@ const sprite_container = new PIXI.Container()
 const BOARD_WIDTH = 80
 const BOARD_HEIGHT = 40 
 const BOARD_MULTIPLIER = 20
-const TEXT_SETTING = {fontSize: 20, align: 'center', fontFamily: 'Courier', dropShadow: true,  dropShadowBlur: '4', dropShadowAlpha: '0.75', dropShadowDistance: '5'}
+
+const FLAG_TEXT_SETTING = {fontSize: 20, align: 'center', fontFamily: 'Courier' }
+const PLAYER_TEXT_SETTING = {fontSize: 20, align: 'center', fontFamily: 'Courier', dropShadow: true,  dropShadowColor: '#CA2603', dropShadowBlur: '2', dropShadowAlpha: '0.8', dropShadowDistance: '4'}
+const PLAYER_TEXT_SETTING_WITH_PEG = {fontSize: 20, align: 'center', fontFamily: 'Courier', dropShadow: true,  dropShadowBlur: '1', dropShadowAlpha: '0.6', dropShadowDistance: '1'}
 
 // note game heights are duplicated
 const app = new PIXI.Application({ width: BOARD_MULTIPLIER * BOARD_WIDTH, height: BOARD_HEIGHT * BOARD_MULTIPLIER, transparent: true, antialias: true, resolution: 1, });
 window.app = app;
+
+window.redrawBoard = function(players) {
+  sprite_container.removeChildren();
+  players.forEach(addPlayerSprite)
+}
 
 function setup(players) {
   var target = document.getElementsByClassName("canvas-target");
   target[0].appendChild(app.view);
   app.stage.addChild(sprite_container);
 
-  players.forEach(addSprite)
+  window.redrawBoard(players)
 }
 
-window.redrawBoard = function(players) {
-  sprite_container.removeChildren();
-  players.forEach(addSprite)
+function getTextSettingsForPlayer(playerData) {
+  return playerData.has_peg ? PLAYER_TEXT_SETTING_WITH_PEG : PLAYER_TEXT_SETTING;
 }
 
-window.addSprite = function(sprite) {
-  let new_sprite = new PIXI.Text(sprite.icon, TEXT_SETTING)
-  new_sprite.x = sprite.x * BOARD_MULTIPLIER
-  new_sprite.y = sprite.y * BOARD_MULTIPLIER
+function addFlag(x, y) {
+  let flag = new PIXI.Text('🚩', FLAG_TEXT_SETTING);
+  flag.x= x * BOARD_MULTIPLIER
+  flag.y= y * BOARD_MULTIPLIER
+  sprite_container.addChild(flag);
+}
 
-  sprite_container.addChild(new_sprite);
+window.addPlayerSprite = function(playerData) {
+  let sprite = new PIXI.Text(playerData.icon, getTextSettingsForPlayer(playerData));
+  const x = playerData.x * BOARD_MULTIPLIER
+  const y = playerData.y * BOARD_MULTIPLIER
+  sprite.x = x;
+  sprite.y = y;
+
+  sprite_container.addChild(sprite);
+  if(playerData.has_flag) { addFlag(x, y) }
+
 }
 
 window.startGame = function(sprites) {

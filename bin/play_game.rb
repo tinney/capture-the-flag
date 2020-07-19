@@ -8,8 +8,8 @@ require 'pry'
 
 # BASE_URL = "https://capture-the-flag.herokuapp.com/"
 BASE_URL = "http://localhost:3000/api"
-PLAYER_ID = "1"
-HEADERS = {'Content-Type' =>'application/json', 'PLAYER' => PLAYER_ID, 'PLAYER_NAME' => 'Dustin Tinney'}
+PLAYER_ID = "2"
+HEADERS = {'Content-Type' =>'application/json', 'PLAYER' => PLAYER_ID, 'PLAYER_NAME' => 'Jennifer Konikowski'}
 
 def make_request(api_endpoint, request_body)
   uri = URI.parse("#{BASE_URL}/#{api_endpoint}/")

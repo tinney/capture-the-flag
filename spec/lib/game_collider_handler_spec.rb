@@ -11,7 +11,7 @@ RSpec.describe 'GameColliderHandler' do
     context 'when a player moves to an empty square' do
       it 'is a no-op' do
         opponent_team
-        GameColliderHandler.handle_in_opponent_base_collisions(player: player, opponents: [], on_flag: false)
+        GameColliderHandler.handle_in_opponent_base_collisions(player: player, opponents: [], flag: nil)
 
         expect(player.has_peg?).to equal(true)
         expect(player.has_flag?).to equal(false)
@@ -26,46 +26,73 @@ RSpec.describe 'GameColliderHandler' do
       context 'a player moves onto an opponent' do
         it 'removes the players peg' do
           expect(player.has_peg?).to equal(true)
-          GameColliderHandler.handle_in_opponent_base_collisions(player: player, opponents: [opponent], on_flag: false)
+          GameColliderHandler.handle_in_opponent_base_collisions(player: player, opponents: [opponent], flag: false)
           expect(player.has_peg?).to equal(false)
         end
 
         it 'does not remove the opponents peg' do
           expect(opponent.has_peg?).to equal(true)
-          GameColliderHandler.handle_in_opponent_base_collisions(player: player, opponents: [opponent], on_flag: false)
+          GameColliderHandler.handle_in_opponent_base_collisions(player: player, opponents: [opponent], flag: nil)
           expect(opponent.has_peg?).to equal(true)
         end
 
-        it 'awards the opponents teams points for the capture' do
-          opponent_team = create(:team, opponent_with_flag: player)
-          expect(opponent_team.points).to equal(0)
-          GameColliderHandler.handle_in_opponent_base_collisions(player: player, opponents: [opponent], on_flag: false)
-          expect(opponent_team.reload.points).to eq(POINTS_FOR_PEG_CAPTURE)
+        it 'awards the opponents teams points for the peg capture' do
+          expect(opponent.team.points).to equal(0)
+          GameColliderHandler.handle_in_opponent_base_collisions(player: player, opponents: [opponent], flag: nil)
+          expect(opponent.team.reload.points).to eq(POINTS_FOR_PEG_CAPTURE)
+        end
+
+        it 'awards the opponents teams points for the peg & flag return' do
+          flag = create(:flag, team: opponent.team, player: player, revealed: true)
+          expect(opponent.team.points).to equal(0)
+          GameColliderHandler.handle_in_opponent_base_collisions(player: player, opponents: [opponent], flag: nil)
+          expect(opponent.team.reload.points).to eq(POINTS_FOR_PEG_CAPTURE + POINTS_FOR_FLAG_RETURN)
         end
       end
 
       context 'when a player moves onto the opponents flag' do
         it 'picks up the flag' do
-          expect(opponent_team.flag_found?).to equal(false)
-          expect(opponent_team.flag_held?).to equal(false)
-          expect(player.has_flag?).to equal(false)
+          flag = create(:flag, team: opponent.team)
 
-          GameColliderHandler.handle_in_opponent_base_collisions(player: player, opponents: [opponent], on_flag: true)
-          opponent_team.reload
+          expect(flag.captured?).to equal(false)
+          expect(flag.revealed?).to equal(false)
+          expect(flag.player).to be_nil
+          expect(player.flag).to be_nil
 
-          expect(player.has_flag?).to equal(true)
-          expect(opponent_team.flag_found?).to equal(true)
-          expect(opponent_team.flag_held?).to equal(true)
+          GameColliderHandler.handle_in_opponent_base_collisions(player: player, opponents: [opponent], flag: flag)
+          player.reload
+
+          expect(flag.captured?).to equal(false)
+          expect(flag.revealed?).to equal(true)
+          expect(flag.player).to eq(player)
+          expect(player.flag).to eq(flag)
         end
       end
     end
     
     context 'w/o a peg' do
       let(:player) { create(:player, :sans_peg, team: team) }
+      
+      context 'when a player moves onto a flag' do
+        it 'is a no-op' do
+          flag = create(:flag, team: opponent.team)
+
+          GameColliderHandler.handle_in_opponent_base_collisions(player: player, opponents: [opponent], flag: flag)
+
+          expect(player.has_peg?).to equal(false)
+          expect(player.has_flag?).to equal(false)
+          expect(flag.captured?).to equal(false)
+          expect(flag.revealed?).to equal(false)
+          expect(flag.player).to be_nil
+          expect(player.flag).to be_nil
+          expect(team.points).to equal(0)
+          expect(opponent.team.points).to equal(0)
+        end
+      end
 
       context 'when a player moves onto an opponent' do
         it 'is a no-op' do
-          GameColliderHandler.handle_in_opponent_base_collisions(player: player, opponents: [opponent], on_flag: false)
+          GameColliderHandler.handle_in_opponent_base_collisions(player: player, opponents: [opponent], flag: nil)
 
           expect(player.has_peg?).to equal(false)
           expect(team.points).to equal(0)
@@ -87,38 +114,46 @@ RSpec.describe 'GameColliderHandler' do
 
       context 'when the player has the flag' do
         it 'awards the points and resets the opponents flag' do
-          opponent_team = create(:team, opponent_with_flag: player)
+          flag = create(:flag, player: player,revealed: true)
+          opponent_team = flag.team
           expect(player.has_peg?).to equal(true)
           expect(player.has_flag?).to equal(true)
           expect(team.points).to equal(0)
-          expect(opponent_team.flag_found?).to equal(true)
-          expect(opponent_team.flag_held?).to equal(true)
+          expect(flag.revealed?).to equal(true)
+          expect(flag.held?).to equal(true)
 
           GameColliderHandler.handle_in_team_base_collisions(player: player, opponents: [])
+
+          player.reload
+          team.reload
+          opponent_team.reload
 
           expect(player.has_peg?).to equal(true)
           expect(player.has_flag?).to equal(false)
           expect(team.points).to equal(POINTS_FOR_FLAG_CAPTURE)
-          opponent_team.reload
-          expect(opponent_team.flag_found?).to equal(false)
-          expect(opponent_team.flag_held?).to equal(false)
+          expect(opponent_team.flag.revealed?).to equal(false)
+          expect(opponent_team.flag.held?).to equal(false)
         end
       end
     end
 
     context 'when a player moves onto an opponent' do
       context 'with a peg' do
-        it 'removes the peg and awards the players team points' do
-          opponent = create(:player, :con_peg, team: opponent_team)
+        let(:opponent) { create(:player, :con_peg, team: opponent_team) }
 
+        it 'removes the peg' do
           expect(player.has_peg?).to equal(true)
           expect(opponent.has_peg?).to equal(true)
-          expect(team.points).to equal(0)
 
           GameColliderHandler.handle_in_team_base_collisions(player: player, opponents: [opponent])
 
           expect(player.has_peg?).to equal(true)
           expect(opponent.has_peg?).to equal(false)
+        end
+
+        it 'awards the players team points' do
+          expect(team.points).to equal(0)
+          GameColliderHandler.handle_in_team_base_collisions(player: player, opponents: [opponent])
           expect(team.reload.points).to equal(POINTS_FOR_PEG_CAPTURE)
         end
       end
@@ -141,26 +176,49 @@ RSpec.describe 'GameColliderHandler' do
 
       context 'with the flag' do
         let(:opponent) { create(:player, :con_peg, name: 'Charlie', team: opponent_team) }
-        let(:team) { create(:team, name: 'Yellow Team', opponent_with_flag: opponent) }
+        let!(:flag) { create(:flag, team: team, player: opponent, revealed: true)}
 
-        it 'removes the flag, peg and awards points' do
+        it 'awards points for the peg&flag capture' do
           expect(team.points).to equal(0)
-          expect(team.flag_found?).to equal(true) # denotes if the opponenets can see the flag
-          expect(team.flag_held?).to equal(true)
-          expect(opponent.has_peg?).to equal(true)
-          expect(opponent.has_flag?).to equal(true)
-          expect(player.has_peg?).to equal(true)
-          expect(player.has_flag?).to equal(false)
 
           GameColliderHandler.handle_in_team_base_collisions(player: player, opponents: [opponent])
 
-          expect(player.has_peg?).to eq(true)
-          expect(player.has_flag?).to eq(false)
           expect(team.reload.points).to eq(POINTS_FOR_FLAG_RETURN + POINTS_FOR_PEG_CAPTURE)
-          expect(team.flag_found?).to eq(true)
-          expect(team.flag_held?).to eq(false)
-          expect(opponent.has_peg?).to eq(false)
-          expect(opponent.has_flag?).to eq(false)
+        end
+
+        it 'replaces the flag' do
+          expect(flag.revealed?).to equal(true) # denotes if the opponenets can see the flag
+          expect(flag.held?).to equal(true)
+
+          GameColliderHandler.handle_in_team_base_collisions(player: player, opponents: [opponent])
+
+          expect(flag.reload.revealed?).to eq(true)
+          expect(flag.held?).to eq(false)
+        end
+
+        it 'removes the flag from the opponents' do
+          expect(opponent.has_flag?).to equal(true)
+          
+          GameColliderHandler.handle_in_team_base_collisions(player: player, opponents: [opponent])
+          flag.reload
+
+          expect(opponent.reload.has_flag?).to eq(false)
+        end
+
+        it 'removes the opponents peg' do
+          expect(opponent.has_peg?).to equal(true)
+
+          GameColliderHandler.handle_in_team_base_collisions(player: player, opponents: [opponent])
+
+          expect(opponent.reload.has_peg?).to eq(false)
+        end
+
+        it 'does nothing to the players peg' do
+          expect(player.has_peg?).to equal(true)
+
+          GameColliderHandler.handle_in_team_base_collisions(player: player, opponents: [opponent])
+
+          expect(player.reload.has_peg?).to eq(true)
         end
       end
     end

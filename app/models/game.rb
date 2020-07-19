@@ -19,11 +19,8 @@ class Game < ApplicationRecord
   def self.get_resources_around_player(player)
     Player.within_range_of(range: player.range, x: player.x, y: player.y).active.where.not(id: player.id).all
   end
-  
-  def self.create_flag(team_id)
-    x_location = rand(1...BOARD_WIDTH)
-    y_location = rand(1...BOARD_HEIGHT)
 
-    Flag.create!(team_id: team_id, x_location: x_location, y_location: y_location)
+  def self.get_flag_around_player(player)
+    Flag.for_team(player.opponent_team).within_range_of(range: player.range, x: player.x, y: player.y).active
   end
 end
