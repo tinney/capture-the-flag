@@ -41,6 +41,44 @@ RSpec.feature "Moves API", type: :request do
       expect(parsed_response['error']).to match(/You do not have an active player./)
     end
   end
+  
+  context 'A player on a left field boundary' do
+    let(:team) { create(:team, field_side: :left_field) }
+    let(:opponent_team) { create(:team, field_side: :right_field)}
+    let(:x_location) { FLAG_DIVIDER }
+    let(:y_location) { 8 }
+    let(:player) { create(:player, :con_peg, team: team, x_location: x_location, y_location: y_location) }
+    
+    scenario "cannot move into their flag area" do
+      opponent_team
+      current_x = player.x
+
+      post "/api/moves/", params: { direction: 'West' }, headers: headers
+      parsed_response = JSON.parse(response.body)
+      
+      expect(player.reload.x).to equal(current_x)
+      expect(player.y).to equal(y_location)
+    end
+  end
+
+  context 'A player on a right field boundary' do
+    let(:team) { create(:team, field_side: :right_field) }
+    let(:opponent_team) { create(:team, field_side: :left_field)}
+    let(:x_location) { BOARD_WIDTH - FLAG_DIVIDER }
+    let(:y_location) { 8 }
+    let(:player) { create(:player, :con_peg, team: team, x_location: x_location, y_location: y_location) }
+    
+    scenario "cannot move into their flag area" do
+      opponent_team
+      current_x = player.x
+
+      post "/api/moves/", params: { direction: 'East' }, headers: headers
+      parsed_response = JSON.parse(response.body)
+      
+      expect(player.reload.x).to equal(current_x)
+      expect(player.y).to equal(y_location)
+    end
+  end
 
   scenario "A Player can move across the board" do
     opponent = create(:player, team: opponent_team)

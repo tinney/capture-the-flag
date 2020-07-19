@@ -16,25 +16,13 @@ class Team < ApplicationRecord
 
   enum field_side: [:left_field, :right_field]
 
-  def coordinates_in_base(x:, y:)
-    MoveCalculator.coordinates_in_base(x: x, field_side: field_side)
-  end
-
   def opponent
     Team.where.not(id: id).first
-  end
-
-  def is_flag_on?(x:, y:)
-    flag.x_location = x && flag.y_location = y
   end
 
   def hide_flag!
     location = MoveCalculator.random_flag_location(field_side: field_side)
     create_flag!(x_location: location.first, y_location: location.last)
-  end
-
-  def take_flag!(opponent)
-    update!(flag_holder_id: opponent.id, revealed: true)
   end
 
   def as_json(options = {})

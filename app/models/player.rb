@@ -39,7 +39,7 @@ class Player < ApplicationRecord
   end
 
   def is_in_base?
-    team.coordinates_in_base(x: x, y: y)
+    MoveCalculator.coordinates_in_base(x: x, field_side: team.field_side)
   end
 
   def is_in_base
