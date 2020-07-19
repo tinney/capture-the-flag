@@ -104,7 +104,6 @@ RSpec.feature "Moves API", type: :request do
 
     expect(player_params['x']).to eq(x_location)
     expect(player_params['y']).to eq(y_location + 1)
-    expect(player_params['active']).to be_truthy
     expect(player_params['has_peg']).to be_truthy
     expect(player_params['has_flag']).to be_falsy
   end
@@ -116,7 +115,7 @@ RSpec.feature "Moves API", type: :request do
     post "/api/moves/", params: { direction: 'South' }, headers: headers
     parsed_response = JSON.parse(response.body)
 
-    expect(parsed_response['flag']).to eq({ 'held' => false, 'revealed' => false})
+    expect(parsed_response['flag']).to eq({ 'held' => false, 'revealed' => false, 'x' => nil, 'y' => nil})
   end
 
   scenario 'Opponents flag held is in the response when the flag is revealed' do
@@ -138,7 +137,7 @@ RSpec.feature "Moves API", type: :request do
     expect(parsed_response['flag']).to eq("x"=>1, "y"=>2, "held"=>false, 'revealed' => true)
   end
 
-  scenario 'Player can capture the flag' do
+  scenario 'Player can pickup the flag' do
     next_player_y_location = y_location + 1
     opponent_team = create(:team, field_side: :left_field)
     create(:flag, team: opponent_team, x_location: x_location, y_location: next_player_y_location)

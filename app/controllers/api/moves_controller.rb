@@ -5,18 +5,12 @@ class Api::MovesController < Api::ApplicationController
     render(json: {error: "Unknown direction #{direction} (NORTH, SOUTH, EAST, WEST)."}, :status => :bad_request) and return unless [NORTH, EAST, SOUTH, WEST].include?(direction)
 
     GameEngine.take_turn(player, direction.upcase)
-    resources = Game.get_resources_around_player(player)
+    opponents = Game.get_resources_around_player(player)
 
     render json: {
-      player: player.as_json(
-        only: [
-          :active,
-          :has_peg,
-        ],
-        methods: [:x, :y, :has_flag, :is_in_base]
-      ),
+      player: player,
       flag: player.opponent_team.flag,
-      opponents: resources,
+      opponents: opponents,
     }
 
   rescue => e

@@ -6,13 +6,13 @@
 #  name       :string           not null
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
-#  points     :integer          default(0)
 #  field_side :integer          default("left_field")
 #
 
 class Team < ApplicationRecord
   has_many :players
   has_one :flag, -> { where.not(captured: true) }
+  has_many :awards
 
   enum field_side: [:left_field, :right_field]
 
@@ -30,5 +30,9 @@ class Team < ApplicationRecord
       only: [],
       methods: []
     }.merge(options))
+  end
+
+  def points
+    awards.sum(:points)
   end
 end

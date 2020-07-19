@@ -48,8 +48,8 @@ class Player < ApplicationRecord
 
   def as_json(options = {})
     super({
-      only: [],
-      methods: [:x, :y]
+      only: [:has_peg],
+      methods: [:x, :y, :has_flag, :is_in_base]
     }.merge(options))
   end
 

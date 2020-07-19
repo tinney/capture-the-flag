@@ -10,10 +10,19 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_07_19_013121) do
+ActiveRecord::Schema.define(version: 2020_07_19_162957) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "awards", force: :cascade do |t|
+    t.string "event"
+    t.integer "team_id"
+    t.integer "player_id"
+    t.integer "points"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
 
   create_table "flags", force: :cascade do |t|
     t.boolean "captured", default: false
@@ -55,7 +64,6 @@ ActiveRecord::Schema.define(version: 2020_07_19_013121) do
     t.string "name", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.integer "points", default: 0
     t.integer "field_side", default: 0
   end
 

@@ -9,11 +9,11 @@ require 'pry'
 # BASE_URL = "https://capture-the-flag.herokuapp.com/"
 BASE_URL = "http://localhost:3000/api"
 
-PLAYER_ID = "1"
-PLAYER_NAME = 'Dustin Tinney'
+# PLAYER_ID = "1"
+# PLAYER_NAME = 'Dustin Tinney'
 
-#PLAYER_ID = "2"
-#PLAYER_NAME = 'Jennifer Konikowski'
+PLAYER_ID = "2"
+PLAYER_NAME = 'Jennifer Konikowski'
 
 HEADERS = {'Content-Type' =>'application/json', 'PLAYER' => PLAYER_ID, 'PLAYER_NAME' => PLAYER_NAME}
 
@@ -48,11 +48,5 @@ directions = { s: "SOUTH", e: "EAST", n: "NORTH", w: "WEST", j: 'JUNK' }
 
 while direction = get_direction do
   puts "Moving #{direction}"
-  response = make_request("moves", { direction: directions[direction.to_sym] })
-  puts response
+  puts make_request("moves", { direction: directions[direction.to_sym] })
 end
-# 10.times do
-#   response = []
-#   direction = calcuclate_direction(x: response["player"]["x"], y: response["player"]["y"], response: response)
-#   sleep(1)
-# end

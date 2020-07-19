@@ -12,6 +12,7 @@ class GameEngine
     end
 
     player.move_to!(new_x: location.x, new_y: location.y)
+    Award.grant_achievements
   end
 end
 

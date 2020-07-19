@@ -39,19 +39,17 @@ class Flag < ApplicationRecord
   end
 
   def x
-    x_location
+    revealed? ? x_location : nil
   end
 
   def y
-    y_location
+    revealed? ? y_location : nil
   end
 
   def as_json(options = {})
-    methods = revealed? ? [:held, :x, :y] : [:held]
-
     super({
       only: [:revealed],
-      methods: methods,
+      methods: [:held, :x, :y],
     }.merge(options))
   end
 end

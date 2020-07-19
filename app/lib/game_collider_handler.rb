@@ -33,8 +33,9 @@ class GameColliderHandler
       return unless flag
 
       flag.capture!
-      award_points(flag.player, POINTS_FOR_FLAG_CAPTURE)
       flag.team.hide_flag!
+
+      Award.flag_capture(flag.player)
     end
 
     def pickup_flag!(flag, player)
@@ -43,26 +44,21 @@ class GameColliderHandler
       return if flag.held?
 
       flag.pickup!(player)
-      award_points(player, POINTS_FOR_FLAG_CAPTURE)
+      Award.flag_pickup(player)
     end
 
     def drop_flag!(player:, grabber:)
       return unless player.has_flag?
       player.drop_flag!
 
-      award_points(grabber, POINTS_FOR_FLAG_RETURN)
+      Award.returned_flag(grabber)
     end
 
     def remove_peg!(player:, grabber:)
       return unless player.has_peg?
       player.update!(has_peg: false)
 
-      award_points(grabber, POINTS_FOR_PEG_CAPTURE)
-    end
-
-    def award_points(player, points)
-      team = player.team
-      team.update!(points: team.points + points)
+      Award.captured_peg(grabber)
     end
   end
 end

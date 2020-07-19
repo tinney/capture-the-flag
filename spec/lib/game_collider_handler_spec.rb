@@ -51,6 +51,14 @@ RSpec.describe 'GameColliderHandler' do
       end
 
       context 'when a player moves onto the opponents flag' do
+        it 'awards pickup flag points' do
+          flag = create(:flag, team: opponent.team)
+
+          expect(team.points).to equal(0)
+          GameColliderHandler.handle_in_opponent_base_collisions(player: player, opponents: [opponent], flag: flag)
+          expect(team.reload.points).to equal(POINTS_FOR_FLAG_PICKUP)
+        end
+
         it 'picks up the flag' do
           flag = create(:flag, team: opponent.team)
 
