@@ -15,22 +15,30 @@ class Award < ApplicationRecord
   belongs_to :team
 
   def self.captured_peg(player)
-    create!(player: player, team: player.team, event: 'Peg Capture', points: POINTS_FOR_PEG_CAPTURE)
+    award = create!(player: player, team: player.team, event: 'Peg Capture', points: POINTS_FOR_PEG_CAPTURE)
+    SlackBroadcaster.broadcast_award(award)
   end
 
   def self.returned_flag(player)
-    create!(player: player, team: player.team, event: 'Flag Return', points: POINTS_FOR_FLAG_RETURN)
+    award = create!(player: player, team: player.team, event: 'Flag Return', points: POINTS_FOR_FLAG_RETURN)
+    SlackBroadcaster.broadcast_award(award)
   end
 
   def self.flag_pickup(player)
-    create!(player: player, team: player.team, event: 'Flag Pickup', points: POINTS_FOR_FLAG_PICKUP)
+    award = create!(player: player, team: player.team, event: 'Flag Pickup', points: POINTS_FOR_FLAG_PICKUP)
+    SlackBroadcaster.broadcast_award(award)
   end
 
   def self.flag_capture(player)
-    create!(player: player, team: player.team, event: 'Flag Capture', points: POINTS_FOR_FLAG_CAPTURE)
+    award = create!(player: player, team: player.team, event: 'Flag Capture', points: POINTS_FOR_FLAG_CAPTURE)
+    SlackBroadcaster.broadcast_award(award)
   end
 
   def self.grant_achievements
     # determine any achievements made 
+  end
+
+  def message
+    "#{team.name} awarded #{points} points for a #{event} by #{player.name} they now have #{team.points} points."
   end
 end
