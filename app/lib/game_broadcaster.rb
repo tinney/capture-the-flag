@@ -1,6 +1,6 @@
 class GameBroadcaster
   def self.update_board
-    players = Player.active.includes(:team).all
+    players = Player.active.includes(:flag).all
     teams = Team.includes(:awards).all
 
     ActionCable.server.broadcast(

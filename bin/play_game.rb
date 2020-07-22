@@ -2,6 +2,7 @@ require 'net/http'
 require 'uri'
 require 'json'
 require 'pry'
+require 'json'
 
 
 #TEAM_ID = "YOUR TEAM ID"
@@ -12,9 +13,11 @@ BASE_URL = "http://localhost:3000/api"
 # PLAYER_ID = "1"
 # PLAYER_NAME = 'Dustin Tinney'
 
-PLAYER_EMAIL = "dustin@testdouble.com"
+default_email = 'dustin@testdouble.com'
+puts "what is your email? (default #{default_email}"
+player_email = gets.chomp || default_email
 
-HEADERS = {'Content-Type' =>'application/json', 'PLAYER_EMAIL' => PLAYER_EMAIL }
+HEADERS = {'Content-Type' =>'application/json', 'PLAYER_EMAIL' => player_email }
 
 def make_request(api_endpoint, request_body)
   uri = URI.parse("#{BASE_URL}/#{api_endpoint}/")
@@ -47,5 +50,6 @@ directions = { s: "SOUTH", e: "EAST", n: "NORTH", w: "WEST", j: 'JUNK' }
 
 while direction = get_direction do
   puts "Moving #{direction}"
-  puts make_request("moves", { direction: directions[direction.to_sym] })
+  response =  make_request("moves", { direction: directions[direction.to_sym] })
+  puts JSON.pretty_generate(response)
 end

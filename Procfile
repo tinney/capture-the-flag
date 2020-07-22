@@ -1,2 +1,2 @@
-web: bundle exec puma -C config/puma.rb
+web: [[ "$ANYCABLE_DEPLOYMENT" == "true" ]] && bundle exec anycable --server-command="anycable-go" || bundle exec puma -C config/puma.rb
 release: bin/rake db:migrate
