@@ -1,5 +1,6 @@
 class Api::ApplicationController < ApplicationController
   before_action :require_player_and_name
+  after_action :broadcast
 
   def require_player_and_name
     render(json: {error: "No Player Email passed in request header"}, :status => :bad_request) and return unless player_email
@@ -13,5 +14,9 @@ class Api::ApplicationController < ApplicationController
 
   def player
     Player.find_by(email: player_email)
+  end
+
+  def broadcast
+    GameBroadcaster.update_board
   end
 end

@@ -12,10 +12,9 @@ BASE_URL = "http://localhost:3000/api"
 # PLAYER_ID = "1"
 # PLAYER_NAME = 'Dustin Tinney'
 
-PLAYER_ID = "2"
-PLAYER_NAME = 'Jennifer Konikowski'
+PLAYER_EMAIL = "dustin@testdouble.com"
 
-HEADERS = {'Content-Type' =>'application/json', 'PLAYER' => PLAYER_ID, 'PLAYER_NAME' => PLAYER_NAME}
+HEADERS = {'Content-Type' =>'application/json', 'PLAYER_EMAIL' => PLAYER_EMAIL }
 
 def make_request(api_endpoint, request_body)
   uri = URI.parse("#{BASE_URL}/#{api_endpoint}/")
@@ -44,7 +43,7 @@ end
 puts "Playing the game"
 puts "Moving the player around"
 
-directions = { s: "SOUTH", e: "EAST", n: "NORTH", w: "WEST", j: 'JUNK' } 
+directions = { s: "SOUTH", e: "EAST", n: "NORTH", w: "WEST", j: 'JUNK' }
 
 while direction = get_direction do
   puts "Moving #{direction}"

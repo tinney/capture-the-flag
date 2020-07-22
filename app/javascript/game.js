@@ -16,6 +16,17 @@ const PLAYER_TEXT_SETTING_WITH_PEG = {fontSize: 20, align: 'center', fontFamily:
 const app = new PIXI.Application({ width: BOARD_MULTIPLIER * BOARD_WIDTH, height: BOARD_HEIGHT * BOARD_MULTIPLIER, transparent: true, antialias: true, resolution: 1, });
 window.app = app;
 
+window.updateScores = function(teams) {
+  teams.forEach(updateTeamScore);
+}
+
+window.updateTeamScore = function(team) {
+  var team_el = document.getElementById('team-' + team.field_side)
+  if (team_el != null) {
+    team_el.textContent = team.points;
+  }
+}
+
 window.redrawBoard = function(players) {
   sprite_container.removeChildren();
   players.forEach(addPlayerSprite)
