@@ -20,6 +20,7 @@ FactoryBot.define do
 
     name { 'Player 1' }
     email { "player_#{rand(100000)}@testdouble.com" }
+    ability { :sight }
     active { true }
     x_location { nil }
     y_location { nil }

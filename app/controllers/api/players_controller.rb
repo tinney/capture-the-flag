@@ -1,21 +1,12 @@
 class Api::PlayersController < Api::ApplicationController
   def show
-    render(json: { error: "no active player found" }, status: :bad_request) and return unless player
+    render(json: {error: "You do not have an active player. Update /api/player to activate your player."}, :status => :bad_request) and return unless player
 
+    opponents = Game.get_resources_around_player(player)
     render json: {
-      player: player.as_json(
-        only: [
-          :active,
-          :has_peg
-        ],
-        methods: [:x, :y]
-      ),
-      board: opponents_near_me,
+      player: player,
+      flag: player.opponent_team.flag,
+      opponents: opponents
     }
-  end
-
-  private
-  def opponents_near_me
-    Game.get_resources_around_player(player)
   end
 end

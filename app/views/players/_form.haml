@@ -14,6 +14,13 @@
     = f.text_field :icon, class: 'form-control'
 
 %div.form-group
+  Ability
+  - Player.abilities.each do |ability, value|
+    %div.form-check
+      = f.radio_button :ability, ability, class: 'form-check-input'
+      %label.form-check-label= ability
+
+%div.form-group
   %label
     Active
     = f.check_box(:active)

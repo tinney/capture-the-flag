@@ -16,8 +16,7 @@ class GameColliderHandler
     private
 
     def collide(player:, grabber:) 
-      if player.juke?
-      else
+      unless player.juke?
         remove_peg!(player: player, grabber: grabber)
         drop_flag!(player: player, grabber: grabber)
       end

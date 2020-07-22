@@ -13,8 +13,10 @@ EAST = 'EAST'.freeze
 SOUTH = 'SOUTH'.freeze
 WEST = 'WEST'.freeze
 
-#PLAYER SETTINGS
-DEFAULT_SIGHT_AREA = 4
+# Player setings & abilities
+DEFAULT_SIGHT_AREA = 5
+SIGHT_RANGE = 10
+JUKE_PERCENTAGE = 30 # 30% chance of juking and not having the peg taken
 
 #POINTS
 POINTS_FOR_FLAG_CAPTURE = 25.freeze
@@ -22,3 +24,4 @@ POINTS_FOR_FLAG_PICKUP = 5.freeze
 POINTS_FOR_FLAG_RETURN = 10.freeze
 POINTS_FOR_PEG_CAPTURE = 5.freeze
 
+SLACK_CHANNEL_NAME = ENV.fetch("SLACK_CHANNEL_NAME")

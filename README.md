@@ -36,9 +36,7 @@ The Field is a 80x40 grid. The first 5 and last 5 spaces of each zone is designa
 
 ## Moving
 
-Moving is sent by sending post requests to the move endpoint. Move directions are based on NORTH, SOUTH, EAST, and WEST. Note the websockets used to show the live board can disconnect, if this happens you'll need to refresh your browser to see the player move.  Sworry, blame Andy (aka DHH)
-
-## 
+Moving is sent by sending post requests to the move endpoint. Move directions are based on NORTH, SOUTH, EAST, and WEST. Note the websockets used to show the live board can disconnect, if this happens you'll need to refresh your browser to see the player move.
 
 
 

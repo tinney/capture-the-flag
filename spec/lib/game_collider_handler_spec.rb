@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe 'GameColliderHandler' do
   let(:team) { create(:team) }
   let(:opponent_team) { create(:team) }
-  let(:player) { create(:player, :con_peg, team: team) }
+  let(:player) { create(:player, :con_peg, team: team, ability: :sight) }
   let(:opponent) { create(:player, :con_peg, team: opponent_team) }
 
 

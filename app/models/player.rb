@@ -17,9 +17,12 @@
 class Player < ApplicationRecord
   validates :team_id, presence: true
   validates :email, presence: true
+
   belongs_to :team
   has_many :moves
   has_one :flag, -> { where(captured: false) }
+
+  enum ability: [:agility, :sight]
 
   before_create :set_location
 
@@ -36,21 +39,21 @@ class Player < ApplicationRecord
   end
 
   def range
-    DEFAULT_SIGHT_AREA
+    sight? ? SIGHT_RANGE : DEFAULT_SIGHT_AREA
   end
 
   def is_in_base?
     MoveCalculator.coordinates_in_base(x: x, field_side: team.field_side)
   end
 
-  def is_in_base
+  def is_in_safe_zone
     is_in_base?
   end
 
   def as_json(options = {})
     super({
       only: [:has_peg],
-      methods: [:x, :y, :has_flag, :is_in_base]
+      methods: [:x, :y, :has_flag, :is_in_safe_zone, :ability]
     }.merge(options))
   end
 
@@ -95,7 +98,6 @@ class Player < ApplicationRecord
   end
 
   def juke?
-    # should look at attributes maybe 20 / 80 or 40 / 60?  
-    return false
+    agility? ? rand(100) < JUKE_PERCENTAGE : false
   end
 end

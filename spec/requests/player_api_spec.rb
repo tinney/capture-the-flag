@@ -9,7 +9,7 @@ RSpec.feature "Creating a Player API", type: :request do
     }
   end
 
-  let(:player) { create(:player, :con_peg, name: 'Fin') }
+  let(:player) { create(:player, :con_peg, name: 'Fin', ability: 'agility') }
   let(:player_email) { player.email }
 
   context "Without a PLAYER_EMAIL header" do
@@ -44,11 +44,14 @@ RSpec.feature "Creating a Player API", type: :request do
     parsed_response = JSON.parse(response.body)
     player_response = parsed_response["player"]
 
-    expect(player_response['active']).to be_truthy
     expect(player_response['has_peg']).to be_truthy
     expect(player_response['has_flag']).to be_falsy
+    expect(player_response['is_in_safe_zone']).to be_truthy
+    expect(player_response['ability']).to eq('agility')
 
     expect(player_response['x']).to be_truthy
     expect(player_response['y']).to be_truthy
+    expect(parsed_response['opponents']).to eq([])
+    expect(parsed_response['flag']).to eq(nil)
   end
 end

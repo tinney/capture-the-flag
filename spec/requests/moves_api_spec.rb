@@ -149,7 +149,7 @@ RSpec.feature "Moves API", type: :request do
   end
 
   scenario "Active and opponents near player are returned" do
-    out_of_range = DEFAULT_SIGHT_AREA + 1
+    out_of_range = SIGHT_RANGE + 1
 
     opponent_team = create(:team)
     flag = create(:flag, team: opponent_team, x_location: x_location, y_location: y_location + 1)

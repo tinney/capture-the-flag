@@ -1,20 +1,8 @@
 class SlackBroadcaster
   def self.broadcast_award(award)
-  end
-  
-  def self.send_request(api_endpoint, options)
-    result_key_map = {
-      "users_lookupByEmail" => "user",
-      "im_open" => "channel"
-    }
-    begin
-      result = client.send(api_endpoint, options)
-      result = result[result_key_map[api_endpoint]] if result_key_map[api_endpoint]
-    rescue Slack::Web::Api::Errors::SlackError => e
-      Bugsnag.leave_breadcrumb("API Details", options.merge(endpoint: api_endpoint))
-      Bugsnag.notify(e)
-      result = {}
-    end
-    result
+    return if Rails.env.test?  # don't broadcast in test mode
+
+    client = Slack::Web::Client.new
+    client.chat_postMessage(channel: SLACK_CHANNEL_NAME, text: award.message)
   end
 end
