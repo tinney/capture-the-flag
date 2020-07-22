@@ -1,57 +1,24 @@
 require "rails_helper"
 
-RSpec.feature "Creating a Player API", type: :request do
-  let(:headers) do
-    {
-      "ACCEPT" => "application/json",     # This is what Rails 4 accepts
-      "HTTP_ACCEPT" => "application/json", # This is what Rails 3 accepts
-      "PLAYER_EMAIL" => player_email, 
-    }
-  end
-
-  let(:player) { create(:player, :con_peg, name: 'Fin', ability: 'agility') }
-  let(:player_email) { player.email }
-
-  context "Without a PLAYER_EMAIL header" do
-    let(:player_email) { nil }
-    
-    scenario "Raises an error" do
-      get "/api/player/", params: { }, headers: headers
-
-      parsed_response = JSON.parse(response.body)
-      expect(parsed_response['error']).to be_truthy
-      expect(parsed_response['error']).to eq("No Player Email passed in request header")
-    end
-  end
-
-  context "With a non existing player id" do
-    let(:player_email) { 'donkey@testdouble.com' }
-    
-    scenario "Raises an error" do
-      get "/api/player/", params: { }, headers: headers
-
-      parsed_response = JSON.parse(response.body)
-      expect(parsed_response['error']).to be_truthy
-      expect(parsed_response['error']).to eq("Player not found for email donkey@testdouble.com.")
-    end
-  end
-  
-  scenario "get a player - A Player and a board are returned" do
+RSpec.feature "Player API", type: :request do
+  scenario "Get a player" do
     opponent_team = create(:team)
+    player = create(:player, :con_peg, ability: 'agility')
+    headers = {
+      accept: 'application/json',
+      authorization: with_token_authorization(player.email)
+    }
 
-    get "/api/player/", params: {}, headers: headers
+    get "/api/player/", headers: headers
 
-    parsed_response = JSON.parse(response.body)
-    player_response = parsed_response["player"]
-
-    expect(player_response['has_peg']).to be_truthy
-    expect(player_response['has_flag']).to be_falsy
-    expect(player_response['is_in_safe_zone']).to be_truthy
-    expect(player_response['ability']).to eq('agility')
-
-    expect(player_response['x']).to be_truthy
-    expect(player_response['y']).to be_truthy
-    expect(parsed_response['opponents']).to eq([])
-    expect(parsed_response['flag']).to eq(nil)
+    expect(response).to have_http_status(:ok)
+    expect(response_json.dig('player', 'has_peg')).to be_truthy
+    expect(response_json.dig('player', 'has_flag')).to be_falsy
+    expect(response_json.dig('player', 'x')).to be_truthy
+    expect(response_json.dig('player', 'y')).to be_truthy
+    expect(response_json.dig('player', 'is_in_safe_zone')).to be_truthy
+    expect(response_json.dig('player', 'ability')).to eq('agility')
+    expect(response_json.dig('opponents')).to eq([])
+    expect(response_json.dig('flag')).to eq(nil)
   end
 end
