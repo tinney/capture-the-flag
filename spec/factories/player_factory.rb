@@ -19,6 +19,7 @@ FactoryBot.define do
     team
 
     name { 'Player 1' }
+    email { "player_#{rand(100000)}@testdouble.com" }
     active { true }
     x_location { nil }
     y_location { nil }

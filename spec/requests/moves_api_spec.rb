@@ -5,8 +5,7 @@ RSpec.feature "Moves API", type: :request do
     {
       "ACCEPT" => "application/json",     # This is what Rails 4 accepts
       "HTTP_ACCEPT" => "application/json", # This is what Rails 3 accepts
-      "PLAYER" => player_id,
-      "PLAYER_NAME" => player_name 
+      "PLAYER_EMAIL" => player_email,
     }
   end
   
@@ -15,18 +14,17 @@ RSpec.feature "Moves API", type: :request do
   let(:x_location) { 5 }
   let(:y_location) { 8 }
   let(:player) { create(:player, :con_peg, team: team, x_location: x_location, y_location: y_location) }
-  let(:player_id) { player.id }
-  let(:player_name) { player.name }
+  let(:player_email) { player.email }
 
-  context "Without a player id" do
-    let(:player_id) { nil }
+  context "Without a player email" do
+    let(:player_email) { nil }
     
     scenario "Raises an error without a player" do
       post "/api/moves/", params: { direction: 'South' }, headers: headers
 
       parsed_response = JSON.parse(response.body)
       expect(parsed_response['error']).to be_truthy
-      expect(parsed_response['error']).to eq("No Player ID passed in request header")
+      expect(parsed_response['error']).to eq("No Player Email passed in request header")
     end
   end
 
