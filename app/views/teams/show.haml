@@ -21,6 +21,8 @@
     .col
       %table.table
         %thead
+          %th Icon
+          %th Email
           %th Name
           %th Location
           %th State
@@ -30,10 +32,13 @@
         %tbody
           - @team.players.order(:created_at).each do |player|
             %tr
+              %td= player.icon
+              %td= player.email
               %td= player.name
               %td== #{player.x}, #{player.y}
               %td= player.active ? 'Active' : 'Inactive'
               %td= player.has_flag?
               %td= player.has_peg?
               %td
+                = link_to "Edit", edit_team_player_path(@team, player)
                 = link_to "View", team_player_path(@team, player)

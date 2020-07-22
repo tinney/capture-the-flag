@@ -10,6 +10,17 @@ class PlayersController < ApplicationController
     end
   end
 
+  def update
+    @team = team
+    @player = Player.find(params[:id])
+
+    if @player.update(player_params)
+      redirect_to team_path(@team)
+    else
+      render "edit"
+    end
+  end
+
   def index
     @team = team
     @players = @team.players
@@ -22,6 +33,7 @@ class PlayersController < ApplicationController
 
   def edit
     @team = team
+    @player = Player.find(params[:id])
   end
 
   def show
@@ -31,7 +43,7 @@ class PlayersController < ApplicationController
 
   private
   def player_params
-    params.require(:player).permit(:name)
+    params.require(:player).permit(:name, :email, :icon, :active)
   end
 
   def team

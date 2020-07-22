@@ -16,6 +16,7 @@
 
 class Player < ApplicationRecord
   validates :team_id, presence: true
+  validates :email, presence: true
   belongs_to :team
   has_many :moves
   has_one :flag, -> { where(captured: false) }
