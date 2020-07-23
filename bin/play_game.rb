@@ -7,15 +7,19 @@ require 'json'
 
 #TEAM_ID = "YOUR TEAM ID"
 
-# BASE_URL = "https://capture-the-flag.herokuapp.com/"
-BASE_URL = "http://localhost:3000/api"
+BASE_URL = "http://td-capture-the-flag.herokuapp.com/api"
+
+#BASE_URL = "http://localhost:3000/api"
 
 # PLAYER_ID = "1"
 # PLAYER_NAME = 'Dustin Tinney'
 
 default_email = 'dustin@testdouble.com'
 puts "what is your email? (default #{default_email}"
-player_email = gets.chomp || default_email
+
+
+player_email = gets.chomp
+player_email = default_email if player_email.empty?
 
 HEADERS = {'Content-Type' =>'application/json', 'PLAYER_EMAIL' => player_email }
 
