@@ -1,59 +1,33 @@
 require "rails_helper"
 
 RSpec.feature "Moves API", type: :request do
+  let(:player) { create(:player, :con_peg, team: team, x_location: x_location, y_location: y_location) }
   let(:headers) do
     {
-      "ACCEPT" => "application/json",     # This is what Rails 4 accepts
-      "HTTP_ACCEPT" => "application/json", # This is what Rails 3 accepts
-      "PLAYER_EMAIL" => player_email,
+      accept: 'application/json',
+      authorization: with_token_authorization(player.email)
     }
   end
-  
+
   let(:opponent_team) { create(:team)}
   let(:team) { create(:team, field_side: :right_field) }
   let(:x_location) { 5 }
   let(:y_location) { 8 }
-  let(:player) { create(:player, :con_peg, team: team, x_location: x_location, y_location: y_location) }
-  let(:player_email) { player.email }
 
-  context "Without a player email" do
-    let(:player_email) { nil }
-    
-    scenario "Raises an error without a player" do
-      post "/api/moves/", params: { direction: 'South' }, headers: headers
-
-      parsed_response = JSON.parse(response.body)
-      expect(parsed_response['error']).to be_truthy
-      expect(parsed_response['error']).to eq("No Player Email passed in request header")
-    end
-  end
-
-  context "Without a active player" do
-    let(:player) { create(:player, active: false) }
-
-    scenario "Raises an error without an active player" do
-      post "/api/moves/", params: { direction: 'South' }, headers: headers
-
-      parsed_response = JSON.parse(response.body)
-      expect(parsed_response['error']).to be_truthy
-      expect(parsed_response['error']).to match(/You do not have an active player./)
-    end
-  end
-  
   context 'A player on a left field boundary' do
     let(:team) { create(:team, field_side: :left_field) }
     let(:opponent_team) { create(:team, field_side: :right_field)}
     let(:x_location) { FLAG_DIVIDER }
     let(:y_location) { 8 }
     let(:player) { create(:player, :con_peg, team: team, x_location: x_location, y_location: y_location) }
-    
+
     scenario "cannot move into their flag area" do
       opponent_team
       current_x = player.x
 
       post "/api/moves/", params: { direction: 'West' }, headers: headers
       parsed_response = JSON.parse(response.body)
-      
+
       expect(player.reload.x).to equal(current_x)
       expect(player.y).to equal(y_location)
     end
@@ -65,14 +39,14 @@ RSpec.feature "Moves API", type: :request do
     let(:x_location) { BOARD_WIDTH - FLAG_DIVIDER }
     let(:y_location) { 8 }
     let(:player) { create(:player, :con_peg, team: team, x_location: x_location, y_location: y_location) }
-    
+
     scenario "cannot move into their flag area" do
       opponent_team
       current_x = player.x
 
       post "/api/moves/", params: { direction: 'East' }, headers: headers
       parsed_response = JSON.parse(response.body)
-      
+
       expect(player.reload.x).to equal(current_x)
       expect(player.y).to equal(y_location)
     end
@@ -83,7 +57,7 @@ RSpec.feature "Moves API", type: :request do
 
     old_x = player.x
     old_y = player.y
-    
+
     post "/api/moves/", params: { direction: 'South' }, headers: headers
 
     player.reload
@@ -91,7 +65,7 @@ RSpec.feature "Moves API", type: :request do
     expect(old_x).to equal(player.x)
     expect(old_y).to be < player.y
   end
-  
+
   scenario "A player's data is returned" do
     opponent_team = create(:team)
 
@@ -157,7 +131,7 @@ RSpec.feature "Moves API", type: :request do
     inactive_player = create(:player, :inactive, x_location: x_location + 1, y_location: y_location + 1, team: opponent_team)
 
     another_player = create(:player, :active, x_location: x_location + out_of_range, y_location: y_location + 1, team: opponent_team)
-    
+
     post "/api/moves/", params: { direction: 'South' }, headers: headers
     parsed_response = JSON.parse(response.body)
 

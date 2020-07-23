@@ -1,19 +1,29 @@
 class Api::ApplicationController < ApplicationController
-  before_action :require_player_and_name
+  before_action :authenticate
   after_action :broadcast
 
-  def require_player_and_name
-    render(json: {error: "No Player Email passed in request header"}, :status => :bad_request) and return unless player_email
-    render(json: {error: "Player not found for email #{player_email}."}, :status => :bad_request) and return unless player
-    render(json: {error: "You do not have an active player for #{player_email}. Slack Dustin."}, :status => :bad_request) and return unless player.active?
+  attr_reader :player
+
+  def authenticate
+    authenticate_with_http_token do |token, _options|
+      @player = Player.find_by(email: token)
+    end
+
+    render_unauthorized and return unless @player.present?
+    render_forbidden and return unless @player.active?
   end
 
-  def player_email
-    request.headers["PLAYER_EMAIL"] || request.headers["HTTP_PLAYER_EMAIL"] || request.headers["HTTP_Player_Email"] || request.headers["HTTP_player_email"]
+  def render_unauthorized
+    headers['WWW-Authenticate'] = %(Token realm="Application")
+    error = { code: 401, message: 'Invalid player' }
+
+    render(json: { error: error }, status: :unauthorized)
   end
 
-  def player
-    Player.find_by(email: player_email)
+  def render_forbidden
+    error = { code: 403, message: 'Inactive player' }
+
+    render(json: { error: error }, status: :forbidden)
   end
 
   def broadcast
