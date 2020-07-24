@@ -17,7 +17,7 @@ class Game < ApplicationRecord
   end
 
   def self.get_resources_around_player(player)
-    Player.within_range_of(range: player.range, x: player.x, y: player.y).includes(:flag).active.where.not(id: player.id).all
+    Player.not_on_team(player.team_id).within_range_of(range: player.range, x: player.x, y: player.y).includes(:flag).active.where.not(id: player.id).all
   end
 
   def self.get_flag_around_player(player)

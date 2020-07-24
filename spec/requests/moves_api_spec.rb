@@ -91,7 +91,7 @@ RSpec.feature "Moves API", type: :request do
   end
 
   scenario 'Opponents flag held is in the response when the flag is revealed' do
-    create(:flag, x_location: 1, y_location: 2, player_id: 4, revealed: true, player_id: 4)
+    create(:flag, x_location: 1, y_location: 2, revealed: true, player_id: 4)
 
     post "/api/moves/", params: { direction: 'South' }, headers: headers
     parsed_response = JSON.parse(response.body)
@@ -127,6 +127,8 @@ RSpec.feature "Moves API", type: :request do
 
     opponent_team = create(:team)
     flag = create(:flag, team: opponent_team, x_location: x_location, y_location: y_location + 1)
+
+    another_player = create(:player, :active, x_location: x_location + 2, y_location: y_location + 1, team: team)
     another_player = create(:player, :active, x_location: x_location + 1, y_location: y_location + 1, team: opponent_team)
     inactive_player = create(:player, :inactive, x_location: x_location + 1, y_location: y_location + 1, team: opponent_team)
 

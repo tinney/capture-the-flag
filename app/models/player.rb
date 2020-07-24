@@ -32,6 +32,7 @@ class Player < ApplicationRecord
 
   scope :at_location, -> (x:, y:){ where(x_location: x, y_location: y) }
   scope :on_team, -> (team_id) { where(team_id: team_id) }
+  scope :not_on_team, -> (team_id) { where.not(team_id: team_id) }
 
   scope :within_range_of, -> (range:, x:, y:) do
     x_range = [(x-range)..(x+range)]
