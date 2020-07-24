@@ -17,5 +17,6 @@ Rails.application.routes.draw do
   end
 
   get 'leaderboard', to: 'games#leaderboard'
+  get 'slack_leaderboard', to: 'games#slack_leaderboard'
   root to: 'games#index'
 end

@@ -21,6 +21,7 @@ class Player < ApplicationRecord
   belongs_to :team
   has_many :moves
   has_one :flag, -> { where(captured: false) }
+  has_many :awards
 
   enum ability: [:agility, :sight]
 
@@ -52,7 +53,7 @@ class Player < ApplicationRecord
 
   def as_json(options = {})
     super({
-      only: [:has_peg],
+      only: [:name, :has_peg],
       methods: [:x, :y, :has_flag, :is_in_safe_zone, :ability]
     }.merge(options))
   end
@@ -99,5 +100,15 @@ class Player < ApplicationRecord
 
   def juke?
     agility? ? rand(100) < JUKE_PERCENTAGE : false
+  end
+
+  def points
+    awards.sum(:points)
+  end
+
+  def grouped_awards
+    awards.group_by do |award|
+      award.event
+    end
   end
 end
