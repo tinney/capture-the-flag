@@ -34,7 +34,7 @@ window.addPlayers = function(players) {
 }
 window.redrawBoard = function(players) {
   //sprite_container.removeChildren();
-  players.forEach(movePlayerSprite)
+  players.forEach(movePlayerSprite);
 }
 
 function setup(players) {
@@ -46,8 +46,7 @@ function setup(players) {
 }
 
 function getTextSettingsForPlayer(playerData) {
-  return PLAYER_TEXT_SETTING_WITH_PEG;
-  //return playerData.has_peg ? PLAYER_TEXT_SETTING_WITH_PEG : PLAYER_TEXT_SETTING;
+  return playerData.has_peg ? PLAYER_TEXT_SETTING_WITH_PEG : PLAYER_TEXT_SETTING;
 }
 
 function addFlag(x, y) {
@@ -59,9 +58,12 @@ function addFlag(x, y) {
 }
 
 window.movePlayerSprite = function(playerData) {
-  let sprite = sprites[playerData.id];
   const x = playerData.x * BOARD_MULTIPLIER
   const y = playerData.y * BOARD_MULTIPLIER
+
+  let sprite = sprites[playerData.id];
+  sprite.style = getTextSettingsForPlayer(playerData);
+
   sprite.x = x;
   sprite.y = y;
 }
