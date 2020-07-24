@@ -4,8 +4,6 @@
 * db:seed if you would like player information 
 * brew install anycable-go for the socket connection
 
-
-
 ## Running Locally
 
 To run the anycable server use anycable-go which can be brew installed
@@ -15,3 +13,4 @@ Run the following 3 commands:
 * bundle exec anycable
 * bin/rails s
 * be ruby bin/play_game.rb #to play the game
+
