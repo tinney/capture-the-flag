@@ -6,6 +6,7 @@ gem 'dotenv-rails'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '~> 6.0.1'
+gem 'rack-attack', '~> 6.3', '>= 6.3.1'
 
 # Use postgres as the database for Active Record
 gem 'pg'
