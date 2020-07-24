@@ -1,18 +1,30 @@
-.row
-  .col
-    %h3 Teams
-.row
-  .col
-    %br
-.row
-  %table.table
-    %thead
-      %th ID
-      %th Name
-      %th
-    %tbody
-      - @teams.each do |team|
-        %tr
-          %td= team.id
-          %td= team.name
-          %td= link_to "View", team_path(team), class: 'btn btn-primary btn-sm'
+- @teams.each do |team|
+  .row
+    .col
+      %h3
+        = team.name
+      .row
+        .col
+          %table.table
+            %thead
+              %th Icon
+              %th Email
+              %th Name
+              %th Location
+              %th State
+              %th Flag?
+              %th Peg?
+              %th View
+            %tbody
+              - team.players.order(:created_at).each do |player|
+                %tr
+                  %td= player.icon
+                  %td= player.email
+                  %td= player.name
+                  %td== #{player.x}, #{player.y}
+                  %td= player.active ? 'Active' : 'Inactive'
+                  %td= player.has_flag?
+                  %td= player.has_peg?
+                  %td
+                    = link_to "Edit", edit_team_player_path(team, player), class: 'btn btn-primary btn-sm'
+                    = link_to "View", team_player_path(team, player), class: 'btn btn-primary btn-sm'

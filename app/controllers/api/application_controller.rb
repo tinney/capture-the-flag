@@ -1,6 +1,5 @@
 class Api::ApplicationController < ApplicationController
   before_action :authenticate
-  after_action :broadcast
 
   attr_reader :player
 
@@ -24,9 +23,5 @@ class Api::ApplicationController < ApplicationController
     error = { code: 403, message: 'Inactive player' }
 
     render(json: { error: error }, status: :forbidden)
-  end
-
-  def broadcast
-    GameBroadcaster.update_board
   end
 end

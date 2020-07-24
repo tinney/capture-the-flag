@@ -15,20 +15,21 @@ The object of the game is to earn the most points as a team before the end of th
 
 * Team flag is randomly hidden at the end of each teams base 0 - 5 for the left side base & 75 - 80 for the right side base.
 
-  
 
 ## The Field
 
 The Field is a 80x40 grid. The first 5 and last 5 spaces of each zone is designated for the flag. 
 
-``Flag Zone          Left Field                        Right Field         Flag Zone`
-`. . . . . | . . . . . . . . . . . . . . . | . . . . . . . . . . . . . . | . . . . .` 
-`. . . . . | . . . . . . . . . . . . . . . | . . . . . . . . . . . . . . | . . . . .` 
-`. . . . . | . . . . . . . . . . . . . . . | . . . . . . . . . . . . . . | . . . . .` 
-`. . . . . | . . . . . . . . . . . . . . . | . . . . . . . . . . . . . . | . . . . .` 
-`. . . . . | . . . . . . . . . . . . . . . | . . . . . . . . . . . . . . | . . . . .` 
-`. . . . . | . . . . . . . . . . . . . . . | . . . . . . . . . . . . . . | . . . . .` 
-`. . . . . | . . . . . . . . . . . . . . . | . . . . . . . . . . . . . . | . . . . .` 
+```
+Flag Zone          Left Field                        Right Field         Flag Zone
+. . . . . | . . . . . . . . . . . . . . . | . . . . . . . . . . . . . . | . . . . . 
+. . . . . | . . . . . . . . . . . . . . . | . . . . . . . . . . . . . . | . . . . . 
+. . . . . | . . . . . . . . . . . . . . . | . . . . . . . . . . . . . . | . . . . . 
+. . . . . | . . . . . . . . . . . . . . . | . . . . . . . . . . . . . . | . . . . . 
+. . . . . | . . . . . . . . . . . . . . . | . . . . . . . . . . . . . . | . . . . .
+. . . . . | . . . . . . . . . . . . . . . | . . . . . . . . . . . . . . | . . . . .
+. . . . . | . . . . . . . . . . . . . . . | . . . . . . . . . . . . . . | . . . . .
+```
 
 ## The Flag
 
@@ -72,7 +73,7 @@ There are many ways to score points for your team.
 
   ### Capturing a Peg
 
-  To capture an opponents peg you must move to the same space they are on. Peg captures are worth 15 points. 
+  To capture an opponents peg you must move to the same space they are on. Peg captures are worth 15 points. A player w/out a peg will glow red on the map.
 
   
 
