@@ -46,3 +46,4 @@ We have provide a ruby gem and a javascript package you can use to move your pla
       2. Agility - You have a better chance of dodging a players peg and flag grab (more info below)
 
    4. Activate your player  
+
