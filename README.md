@@ -32,7 +32,6 @@ We have provide a ruby gem and a javascript package you can use to control your 
 
       1. Sight - You can see twice as far in the game 
       2. Agility - You have a better chance of dodging a players peg and flag grab (more info below)
-      3. Healthy - You are able to make more moves before needing to take a lie down
 
    4. Activate your player  
 
@@ -74,21 +73,19 @@ Flag Zone          Left Field                        Right Field         Flag Zo
 
 ## Moving
 
-Moving is sent by sending post requests to the move endpoint. Move directions are based on NORTH, SOUTH, EAST, and WEST. You can go here http://td-capture-the-flag.herokuapp.com/ to get a view of the board. 
-
-As developers we get tired easy and need to take a lie down.  Your move response will indicate this by having a `needs_lie_down: X` indicating how long you need to wait until making your next move. 
+Moving is sent by sending post requests to the move endpoint. Move directions are based on NORTH, SOUTH, EAST, and WEST. You can go here http://td-capture-the-flag.herokuapp.com/ to get a view of the board. Check the capture-the-flag-client-{rb|js} for more info on how to move. 
 
 
 
 ## Seeing
 
-Players can see in 5 squares around them.  If a player has the sight ability they will be able to see 10 squares around them. 
+Players can see in 5 squares around them.  If a player has the sight ability they will be able to see 10 squares around them. Opponents near you will be returned when making a move or by doing a get on your player's endpoint 
 
 
 
 ## Scoring Points
 
-There are many ways to score points for your team. 
+There are 4 ways to score points for your team. 
 
 * Picking up the flag is worth 5 points
 
@@ -116,24 +113,12 @@ There are many ways to score points for your team.
 
   
 
-  
-
   ### Capturing a Peg
 
   To capture an opponents peg you must move to the same space they are on. Peg captures are worth 15 points. A player w/out a peg will glow red on the map. Players who have agility on have a 30% chance of avoiding a peg capture. 
 
   
 
-  
-
   ### The Flag Zone
 
   At the end of each teams base is a 5x40 zone for the flag.  The team cannot enter their own flag zone. This is so you cannot just stand on your own flag to guard it. Once an opponent enters your flag zone they will be safe to find the flag but must recross your base for the capture. 
-
-  
-
-  
-
-  ### Achievements
-
-  There are a random number of achievements each team can be awarded during the game.  Achievement points are based on the difficulty of the achievement and range from 1 point to 100 points. When a team scores an achievement a notice will be posted to the #capture-the-flag slack channel. 

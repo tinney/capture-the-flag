@@ -1,10 +1,10 @@
-# 0 - 5 Flag
-# 75 - 80 Flag
 
 BOARD_WIDTH = 80 # NOTE this is also set in game.js
 BOARD_HEIGHT = 40 # NOTE this is also set in game.js
 FIELD_CENTER = 40
 FLAG_DIVIDER = 5
+# 0 - 5 Flag
+# 75 - 80 Flag
 
 MOVE_AMOUNT = 1 
 
