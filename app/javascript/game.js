@@ -14,6 +14,7 @@ const PLAYER_TEXT_SETTING_WITH_PEG = {fontSize: 20, align: 'center', fontFamily:
 
 // note game heights are duplicated
 const app = new PIXI.Application({ width: BOARD_MULTIPLIER * BOARD_WIDTH, height: BOARD_HEIGHT * BOARD_MULTIPLIER, transparent: true, antialias: true, resolution: 1, });
+const sprites = [];
 window.app = app;
 
 window.updateScores = function(teams) {
@@ -27,9 +28,13 @@ window.updateTeamScore = function(team) {
   }
 }
 
+window.addPlayers = function(players) {
+  players.forEach(addPlayerSprite);
+  players.forEach(movePlayerSprite);
+}
 window.redrawBoard = function(players) {
-  sprite_container.removeChildren();
-  players.forEach(addPlayerSprite)
+  //sprite_container.removeChildren();
+  players.forEach(movePlayerSprite)
 }
 
 function setup(players) {
@@ -37,30 +42,35 @@ function setup(players) {
   target[0].appendChild(app.view);
   app.stage.addChild(sprite_container);
 
-  window.redrawBoard(players)
+  window.addPlayers(players)
 }
 
 function getTextSettingsForPlayer(playerData) {
-  return playerData.has_peg ? PLAYER_TEXT_SETTING_WITH_PEG : PLAYER_TEXT_SETTING;
+  return PLAYER_TEXT_SETTING_WITH_PEG;
+  //return playerData.has_peg ? PLAYER_TEXT_SETTING_WITH_PEG : PLAYER_TEXT_SETTING;
 }
 
 function addFlag(x, y) {
+  return;
   let flag = new PIXI.Text('🚩', FLAG_TEXT_SETTING);
   flag.x= x * BOARD_MULTIPLIER
   flag.y= y * BOARD_MULTIPLIER
   sprite_container.addChild(flag);
 }
 
-window.addPlayerSprite = function(playerData) {
-  let sprite = new PIXI.Text(playerData.icon, getTextSettingsForPlayer(playerData));
+window.movePlayerSprite = function(playerData) {
+  let sprite = sprites[playerData.id];
   const x = playerData.x * BOARD_MULTIPLIER
   const y = playerData.y * BOARD_MULTIPLIER
   sprite.x = x;
   sprite.y = y;
+}
 
+window.addPlayerSprite = function(playerData) {
+  let sprite = new PIXI.Text(playerData.icon, getTextSettingsForPlayer(playerData));
+  sprites[playerData.id] = sprite;
   sprite_container.addChild(sprite);
-  if(playerData.has_flag) { addFlag(x, y) }
-
+  //if(playerData.has_flag) { addFlag(x, y) }
 }
 
 window.startGame = function(sprites) {
